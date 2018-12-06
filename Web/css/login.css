@@ -1,0 +1,147 @@
+@media (min-height: 800px){
+	body{
+		overflow: hidden;
+	}
+}
+.particles-pages{
+	position: absolute;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-color: #1d2038;
+}
+.login-bg1{
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: -945px;
+	width: 1890px;
+	height: 600px;
+	background: url(../images/login-bg-bottom.png) center bottom;
+	
+	-webkit-animation-name: fadeIn;
+	animation-name: fadeIn;
+	-webkit-animation-duration: .5s;
+	animation-duration: .5s;
+	-webkit-animation-fill-mode:both;
+	animation-fill-mode: both;
+	animation-timing-function: linear;
+	-webkit-animation-timing-function: linear;
+}
+.login-bg2{
+	position: absolute;
+	width: 380px;
+	height: 702px;
+	left: 0;
+	bottom: 0;
+	background: url(../images/login-bg-house1.png);
+	
+	-webkit-animation-name: heightUp;
+	animation-name: heightUp;
+	-webkit-animation-duration: .5s;
+	animation-duration: .5s;
+	-webkit-animation-fill-mode:both;
+	animation-fill-mode: both;
+	animation-timing-function: linear;
+	-webkit-animation-timing-function: linear;
+}
+.login-bg3{
+	position: absolute;
+	width: 614px;
+	height: 428px;
+	right: 0;
+	bottom: 0;
+	background: url(../images/login-bg-house2.png);
+	
+	-webkit-animation-name: heightUp2;
+	animation-name: heightUp2;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-fill-mode:both;
+	animation-fill-mode: both;
+	animation-timing-function: linear;
+	-webkit-animation-timing-function: linear;
+}
+@keyframes heightUp{
+	0% {
+		height: 0;
+	}
+	100% {
+		height: 702px;
+	}
+}
+@keyframes heightUp2{
+	0% {
+		height: 0;
+	}
+	20% {
+		height: 0;
+	}
+	100% {
+		height: 428px;
+	}
+}
+@keyframes fadeIn{
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.btn-bordred.btn-custom {
+    background-color: #33395f;
+    border-bottom: 2px solid #101329!important;
+}
+.btn-bordred.btn-custom:hover,.btn-bordred.btn-custom:focus{
+	background-color: #101329!important;
+    border-bottom: 2px solid #080c23!important;
+}
+
+.tit-tab{
+}
+
+.tit-tab h4{
+	width: 50%;
+	float: left;
+	color: #666;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 20px;
+	cursor: default;
+}
+
+.tit-tab h4.active{
+	border-bottom: 3px solid #393e5d;
+	color: #393e5d;
+	padding-bottom: 18px;
+}
+
+
+.send-btn{
+    font-size: 1rem;
+    background: #33395f;
+    color: #fff;
+    height: 38px;
+    display: block;
+    line-height: 38px;
+    padding: 0 10px;
+}
+
+@media (max-width: 768px) {
+	.login-bg1{
+		max-width: 100%;
+		left:0;
+		margin-left: 0;
+	}
+	.login-bg2{
+		max-width: 100%;
+	}
+	.login-bg3{
+		display: none;
+	}
+	.tit-tab h4{
+		font-size: .9rem;
+		font-weight: normal;
+	}
+}

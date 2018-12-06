@@ -1,0 +1,86 @@
+﻿@model long
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="container">
+        <span style="font-size:18px;display:block;margin-top:20px;margin-bottom:10px;">直推图</span>
+        <div class="row">
+            @*会员编号：<input type="text" id="txtMobile" />
+                <button type="button" class="easyui-linkbutton" onclick="Serach()">查询</button>
+                <button type="button" class="easyui-linkbutton" onclick="up()">up</button>*@
+            <input type="hidden" id="userId" value="@Model" />
+            <div class="col-md-10">
+                <!--内容开始-->
+                <div id="tree" class="tree tree-unselectable">
+                    <ul id="red">
+                        =
+                        <li data-jstree='{"opened":true}'></li>
+                    </ul>
+                    <input id="uid" class="userid" type="hidden" />
+                    <input id="tage" class="tage" type="hidden" />
+                </div>
+            </div>
+        </div>
+        <!-- End row -->
+
+    </div>
+    <!-- container -->
+</div>
+<script src="~/js/jstree.min.js"></script>
+<script>
+    var token = $("#token").val();
+    $(function () {
+        var userId = $("#userId").val();
+        $('#red').jstree({
+            'core': {
+                'data': {
+                    "url": "/recommendtree/get?uid=" + userId + "",
+                    "dataType": "json",
+                    "data": function (node) {
+                        return { "id": node.id };
+                    }
+                }
+            }
+
+        });
+        $('#red').jstree().hide_icons();
+
+    })
+    function Serach() {
+        $('#red').data('jstree', false).empty();
+        token = $("#token").val();
+        var mobile = $("#txtMobile").val();
+        $('#red').jstree({
+            'core': {
+                'data': {
+                    "url": "/recommendtree/search?mobile=" + mobile + "",
+                    "dataType": "json",
+                    "data": function (node) {
+                        return { "id": node.id };
+                    }
+                }
+            }
+
+        });
+        $('#red').jstree().hide_icons();
+    }
+    function up() {
+        $('#red').data('jstree', false).empty();
+        token = $("#token").val();
+        var userId = $("#userId").val();
+        $('#red').jstree({
+            'core': {
+                'data': {
+                    "url": "/recommendtree/up?&uid=" + userId + "",
+                    "dataType": "json",
+                    "data": function (node) {
+                        return { "id": node.id };
+                    }
+                }
+            }
+
+        });
+        $('#red').jstree().hide_icons();
+    }
+</script>

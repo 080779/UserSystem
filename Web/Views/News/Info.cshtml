@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 text-right m-b-10">
+                <a href="javascript:history.go(-1)" class="btn btn-sm btn-default"><i class="fa fa-mail-reply-all"></i> 返回</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card-box">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h2 class="text-center">@Model.Code</h2>
+                            <p class="text-center text-muted">
+                                发布时间:@Model.CreateTime
+                                &nbsp;&nbsp;发布者：@Model.Creator
+                            </p>
+                            <div class="m-t-20">
+                                <p>@Html.Raw(Model.Content)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End row -->
+
+    </div>
+    <!-- container -->
+
+</div>

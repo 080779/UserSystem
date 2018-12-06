@@ -1,0 +1,85 @@
+* {
+	margin: 0;
+	padding: 0
+}
+
+body {
+	background: #261f54 url(/images/background.jpg) no-repeat 0 0;
+	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	background-size:auto 100%;
+}
+
+.container {
+	position: relative;
+	overflow: hidden;
+	padding-bottom: 1.8rem
+}
+
+.tip-mask {
+	display: block;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 999;
+	background-color: #000;
+	opacity: .7;
+	text-align: right
+}
+
+.tip-mask .wx-tips {
+	display: block;
+	width: 75%;
+	height: 100%;
+	margin: 0 auto;
+	background: url() no-repeat 0 0;
+	background-size: 100%
+}
+
+.logo {
+	width: 1.68rem;
+	height: 1.68rem;
+	background: url(/images/logo-down.png) no-repeat 0 0;
+	background-size: 100%;
+	margin: 1.811rem auto 0
+}
+
+.logo-title {
+	margin: .181rem auto 0;
+	background-color: rgba(75, 25, 208,.6);
+	color: #fff;
+	width: 5.36rem;
+	text-align: center;
+	font-size: .27rem;
+	letter-spacing: .1rem;
+	margin-top: .35rem;
+	padding: .1rem 0;
+	border-radius: .3rem;
+	line-height: .5rem;
+}
+
+.intro {
+	color: #c1becf;
+	width: 4.96rem;
+	margin: .272rem auto .3rem;
+	line-height: 1.8;
+	font-size: .3rem;
+}
+
+.btn {
+	display: block;
+	height: .735rem;
+	width: 4.882rem;
+	margin: .4rem auto 0;
+	border: none;
+	outline: none;
+	background:-webkit-gradient(linear, 0 0,100% 0, from(rgba(111, 79, 252, 0.8)), to(rgba(178, 58, 243, 0.6)));
+	border-radius: 20px;
+	color: #fff;
+	letter-spacing: .04rem;
+}
+
+.btn:active{
+	background:-webkit-gradient(linear, 0 0,100% 0, from(rgba(111, 79, 252, 0.9)), to(rgba(178, 58, 243, 0.7)));
+}

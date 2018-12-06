@@ -1,0 +1,11 @@
+﻿user:
+FrozenAmount	3-锁仓积分
+BonusAmount		1-A积分			
+Amount			2-B积分
+
+
+bonus:
+1-直推奖 
+2-消费送积分，静态奖
+3-购物奖励
+4-级差奖

@@ -1,0 +1,325 @@
+﻿@using IMS.Common.Enums
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/core.css" />
+    <link rel="stylesheet" type="text/css" href="/css/components.css" />
+    <link rel="stylesheet" type="text/css" href="/css/icons.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages.css" />
+    <link rel="stylesheet" type="text/css" href="/css/menu.css" />
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css" />
+    <link rel="stylesheet" type="text/css" href="/css/sweetalert2.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/emergygame.css" />
+    @*<link href="~/assets/css/ace.min.css" rel="stylesheet" />*@
+    <script src="/js/jquery.min.js"></script>
+    <script src="~/assets/layer/layer.js" type="text/javascript"></script>
+    <script type="text/javascript" src="~/areas/admin/js/vue.min2.5.16.js"></script>
+    <script type="text/javascript" src="~/areas/admin/js/vue-resource.min1.5.0.js"></script>
+    <style>
+        .pagination a[disabled] {
+            color: #777;
+            cursor: not-allowed;
+            background-color: #fff;
+            border-color: #ddd;
+        }
+
+        .pagination span.active {
+            z-index: 2;
+            color: #fff;
+            cursor: default;
+            background-color: #337ab7;
+            border-color: #337ab7;
+        }
+    </style>
+</head>
+<body class="fixed-left">
+    <!-- Begin page -->
+    <div id="wrapper" class="enlarged">
+
+        <!-- Top Bar Start -->
+        <div class="topbar">
+            <!-- LOGO 系统-->
+            <div class="topbar-left">
+                <a href="/" class="logo">
+                    <span><img src="/images/logo.png" /></span>
+
+                    <i class="zmdi zmdi-layers"></i>
+                </a>
+            </div>
+
+            <!-- Button mobile view to collapse sidebar menu -->
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container">
+
+                    <!-- Page title -->
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <span class="button-menu-mobile open-left">
+                                <i class="zmdi zmdi-menu"></i>
+                            </span>
+                        </li>
+                        <!--<li>
+                            <h4 class="page-title">首页
+                            </h4>
+                        </li>-->
+                    </ul>
+
+                    <!-- Right(Notification and Searchbox -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="hidden-xs">
+                            <div role="search" class="app-search">
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- end container -->
+            </div>
+            <!-- end navbar -->
+        </div>
+
+        <div class="left side-menu">
+            <div id="particles-js" class="side-menu-bg" style="position: absolute; bottom: 0; right: 0; left: 0; top: 0;"></div>
+
+            <div class="sidebar-inner slimscrollleft">
+
+                <!-- User -->
+                <div class="user-box">
+
+                    <h5><a>@ViewBag.LevelName</a></h5>
+                    <h5><a href="/user/member/PersonalInfo.aspx">@ViewBag.Mobile</a> </h5>
+                    <h5><a>@ViewBag.Amount</a></h5>
+                    <ul class="list-inline">
+                        <li>
+                            <a href="/user/member/ModifyPassWord.aspx">
+                                <i class="zmdi zmdi-settings"></i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/user/logout" title="退出系统" class="text-custom">
+                                <i class="zmdi zmdi-power"></i>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+                <!-- End User -->
+                <div id="sidebar-menu">
+                    <ul>
+                        <li class="text-muted menu-title">菜单</li>
+
+                        <li>
+                            <a href="/" class="w1aves-effect"><i class="zmdi zmdi-home"></i><span>首页 </span><span class="menu-arrow"></span></a>
+
+                            @*<ul class="list-unstyled">
+                                    <li><a href="/user/Mall/GoodsList.aspx">商品列表 </a></li>
+                                    <li><a href="/user/Mall/GoodsCart.aspx">购物车</a></li>
+                                    <li><a href="/user/Mall/OrderList.aspx">订单列表</a></li>
+                                    <li><a href="/user/Mall/Address.aspx">收货地址</a></li>
+
+                                </ul>*@
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="/recommendTree/info" class="waves-effect"><i class="fa fa-user"></i><span>直推图 </span><span class="menu-arrow"></span></a>
+                            @*<ul class="list-unstyled">
+                                    <li><a href="/user/index.aspx" class="waves-effect"><span>用户信息</span></a></li>
+                                    <li><a href="/user/member/PersonalInfo.aspx">会员资料</a></li>
+                                    <li><a href="/user/member/ModifyPassWord.aspx">修改密码</a></li>
+
+
+                                    <li><a href="/user/member/UserBank.aspx">银行卡管理</a></li>
+                                </ul>*@
+                        </li>
+                        @if (ViewBag.IsUpgraded)
+                        {
+                            <li class="has_sub">
+                                <a href="/course/buy" class="waves-effect"><i class="zmdi zmdi-view-list"></i><span>购买培训课程</span><span class="menu-arrow"></span></a>
+                            </li>
+                            <li class="has_sub">
+                                <a href="/user/qrcode" class="waves-effect"><i class="zmdi zmdi-chart"></i><span>推荐二维码</span><span class="menu-arrow"></span></a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- Sidebar -->
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+
+        <div class="content-page">
+            @RenderBody()
+            <!-- content -->
+            <footer class="footer">
+                Copyright © @DateTime.Now.ToString("yyyy")
+            </footer>
+        </div>
+    </div>
+    <script type="text/javascript" src="/JS/jquery.qrcode.min.js"></script>
+    <script src="/js/modernizr.min.js"></script>
+    <script>
+        var resizefunc = [];
+    </script>
+
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/detect.js"></script>
+    <script src="/js/fastclick.js"></script>
+    <script src="/js/jquery.slimscroll.js"></script>
+    <script src="/js/jquery.blockui.js"></script>
+    <script src="/js/waves.js"></script>
+    <script src="/js/jquery.nicescroll.js"></script>
+    <script src="/js/jquery.scrollto.min.js"></script>
+    <script src="/js/moment.js"></script>
+    <script src="/js/bootstrap-datepicker.min.js"></script>
+    <script src="/js/daterangepicker.js"></script>
+    <script src="/js/sweetalert2.min.js"></script>
+    <script src="/js/jquery.core.js"></script>
+    <script src="/js/jquery.app.js"></script>
+    <script src="/js/particles.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/game.js" type="text/javascript" charset="utf-8"></script>
+    <script src="~/assets/layer/layer.js"></script>
+    <script type="text/javascript">
+
+        function toUtf8(str) {
+            var out, i, len, c;
+            out = "";
+            len = str.length;
+            for (i = 0; i < len; i++) {
+                c = str.charCodeAt(i);
+                if ((c >= 0x0001) && (c <= 0x007F)) {
+                    out += str.charAt(i);
+                } else if (c > 0x07FF) {
+                    out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+                    out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+                    out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+                } else {
+                    out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+                    out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+                }
+            }
+            return out;
+        }
+        var left = $("#hdleft").val();
+        var right = $("#hdright").val();
+        $('#leftcode').qrcode(left);
+        $('#rightcode').qrcode(right);
+
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": false,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": false,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 100,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+</body>
+</html>

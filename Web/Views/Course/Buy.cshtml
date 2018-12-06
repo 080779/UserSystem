@@ -1,0 +1,144 @@
+﻿@model IMS.DTO.BankAccountDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="container">
+        <div class="row m-b-20">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div class="grid-title">
+                        <h4>购买培训课程</h4>
+                    </div>
+                    <div class="row" id="app">
+                        <div class="form-horizontal col-sm-12">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">银行账号：</label>
+                                <div class="col-md-10">
+                                    @Model.BankAccount
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">开户银行：</label>
+                                <div class="col-md-10">
+                                    @Model.BankName
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">开户名：</label>
+                                <div class="col-md-10">
+                                    @Model.Name
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">开户银行支行：</label>
+                                <div class="col-md-10">
+                                    @Model.Description
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">选择课程：</label>
+                                <div class="col-md-10">
+                                    <ul style="list-style:none;padding-left:2px;" v-for="link in links">
+                                        <li><input type="radio" v-bind:id='link.id' v-bind:value="link.id" name="course" /> <label v-bind:for='link.id'><span v-html="link.name"></span> 课程价格：<span style="color:red" v-html="link.link001"></span>元</label></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">
+                                    上传打款凭证：<span class="required">&nbsp;</span>
+                                </label>
+                                <div class="col-md-10">
+                                    <div class="file-input has-error">
+                                        <div class="file-preview">
+                                            <div class="file-drop-zone clearfix">
+                                                <div class="file-preview-frame">
+                                                    <img id="previewImage" v-on:click="selectImage" src="/images/uploadfile.png" style="min-width: 160px; max-height: 120px;" alt="暂无图片" />
+                                                    <input type="file" id="getImgFile" class="btn" style="display:none;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"></label>
+                                <div class="col-md-10">
+                                    <button class="btn btn-custom" v-on:click="commit">提 交</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/areas/admin/js/jquery.uploadimg.js"></script>
+<script>
+    //$("#selectImage").click(function () {
+    //    console.log(111);
+    //    $("#getImgFile").click();
+    //});
+
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            links: []
+        },
+        methods: {
+            getpage: function () {
+                this.$http.post('/course/list', {}, { emulateJSON: true }).then(function (result) {
+                    this.links = result.data.data;
+                })
+            },
+            selectImage: function () {
+                $("#getImgFile").click();
+            },
+            commit: function () {
+                var that = this;
+                var id = $('input[name="course"]:checked').val();
+                console.log(id);
+                if (id == undefined) {
+                    layer.msg("请选择课程");
+                    return;
+                }
+                var img = $("#previewImage").attr("src");
+                if (img == "/images/uploadfile.png") {
+                    layer.msg("请选择图片");
+                    return;
+                }
+                layer.confirm("确定要购买课程吗？", { icon: 0, title: '是否购买课程' }, function (index) {
+                    that.$http.post('/course/buy', { id: id, imgFile: img }, { emulateJSON: true }).then(function (result) {
+                        if (result.data.status == 1) {
+                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                        }
+                        else if (result.data.status == 0) {
+                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                        }
+                    });
+                });
+            }
+        },
+        mounted: function () {
+            this.getpage();
+        }
+    });
+
+    uploadpic("#getImgFile", "#previewImage");
+    function uploadpic(fileid, img) {
+        var oUpload = new UploadPic();
+        oUpload.init({
+            input: $(fileid)[0],
+            callback: function (base64) {
+                $(img).attr('src', base64);
+            }
+        });
+    }
+</script>

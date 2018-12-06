@@ -1,0 +1,98 @@
+﻿@{
+   Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <div class="container">
+        @*<div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="card-box widget-user">
+                        <div class="text-center">
+                            <h2 class="text-success">1089.65</h2>
+                            <h5>佣金积分</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="card-box widget-user">
+                        <div class="text-center">
+                            <h2 class="text-pink">0.00</h2>
+                            <h5>电子积分</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="card-box widget-user">
+                        <div class="text-center">
+                            <h2 class="text-info">544.82</h2>
+                            <h5>消费积分</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <div class="card-box widget-user">
+                        <div class="text-center">
+                            <h2 class="text-warning">181.61</h2>
+                            <h5>购物积分</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+        <div id="app" class="row">
+            <div class="col-sm-12">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0 m-b-30">新闻中心</h4>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-merge table-responsive">
+                                <table class="table table-condensed m-0">
+                                    <thead>
+                                        <tr>
+                                            <th>最新动态</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-for="notice in notices">
+                                        <tr>
+                                            <td width="70%"><a style="cursor:pointer;" v-on:click="getNews(notice.id)" v-html="notice.code"></a></td>
+                                            <td v-html="notice.createTime"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End row -->
+
+    </div>
+    <!-- container -->
+</div>
+<script>
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            notices: [],
+            pages: {
+                all: "", cur: 1, txtpage: ""
+            },
+            searchs: {
+                startTime: "", endTime: "", keyword: ""
+            }
+        },
+        methods: {
+            getNews: function (id) {
+                window.location.href = "/news/info/"+id;
+            }
+        },
+        mounted: function () {
+            this.$http.post('/news/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.notices = result.data.data;
+            })
+        }
+    });
+</script>

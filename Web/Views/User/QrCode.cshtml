@@ -1,0 +1,23 @@
+﻿@model string
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="container">
+        <h4 class="header-title m-t-0 m-b-30">推荐二维码</h4>
+        <div style="margin-top:15%;margin-left:20%" id="qrcode"></div>
+    </div>
+</div>
+
+<script src="~/js/qrcode.min.js"></script>
+<script>
+    // 设置参数方式
+    var qrcode = new QRCode('qrcode', {
+        text: '@Model',
+        width: 200,
+        height: 200,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+</script>
