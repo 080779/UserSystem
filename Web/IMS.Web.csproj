@@ -984,6 +984,7 @@
     <Content Include="Views\Course\Buy.cshtml" />
     <Content Include="Views\User\QrCode.cshtml" />
     <Content Include="Views\User\Benefit.cshtml" />
+    <Content Include="Views\User\Info.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

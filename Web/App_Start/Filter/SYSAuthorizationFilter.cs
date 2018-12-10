@@ -139,6 +139,7 @@ namespace IMS.Web.App_Start.Filter
                     foreach(var attr in attributes)
                     {
                         filterContext.Controller.ViewBag.Title = attr.Title;
+                        filterContext.Controller.ViewBag.Id = user.Id;
                         filterContext.Controller.ViewBag.Mobile = user.Mobile;
                         filterContext.Controller.ViewBag.LevelName = user.LevelName;
                         filterContext.Controller.ViewBag.Amount = user.Amount;

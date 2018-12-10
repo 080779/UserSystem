@@ -150,7 +150,7 @@ namespace IMS.Web.Controllers
         public async Task<ActionResult> QrCode()
         {
             string userCode = await userService.GetUserCodeByIdAsync(CookieHelper.GetLoginId());
-            string url = "http://192.168.1.110:8081/user/register?recommend=" + userCode;
+            string url = "http://104.151.50.99:8359/user/register?recommend=" + userCode;
             return View((object)url);
         }
         #endregion
@@ -160,6 +160,15 @@ namespace IMS.Web.Controllers
         public async Task<ActionResult> Benefit()
         {
             var model = await settingService.GetModelListAsync("会员权益", null);
+            return View(model);
+        }
+        #endregion
+
+        #region 会员信息
+        [PublicViewBag("会员权益")]//SYSAuthorizationFilter中含有这个标记的action添加公共的viewbag到布局页中
+        public async Task<ActionResult> Info(long id)
+        {
+            var model = await userService.GetModelAsync(id);
             return View(model);
         }
         #endregion
