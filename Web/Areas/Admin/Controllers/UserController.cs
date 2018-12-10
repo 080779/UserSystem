@@ -180,6 +180,14 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = res.Value });
             }
             var dt = ExcelHelper.GetDataTable(res.Value);
+            foreach (DataRow row in dt.Rows)
+            {
+                if(row[1].ToString()=="" || row[1].ToString() == "姓名")
+                {
+                    continue;
+                }
+                var rowid = row["序号"].ToString();
+            }
             return Json(new AjaxResult { Status = 1, Msg = "导入成功" });
         }
         #endregion
