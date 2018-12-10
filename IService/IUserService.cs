@@ -1,5 +1,6 @@
 ﻿using IMS.DTO;
 using System;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace IMS.IService
@@ -14,6 +15,7 @@ namespace IMS.IService
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
         Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
+        Task<long> AddByExcelAsync(DataTable dt);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
         /// <summary>
         /// 修改头像，昵称

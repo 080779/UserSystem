@@ -6,6 +6,7 @@ using IMS.Service.Entity;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
@@ -138,6 +139,65 @@ namespace IMS.Service.Service
                     log.ErrorFormat("AddAsync:{0}", ex.ToString());
                     return -3;
                 }
+            }
+        }
+
+        public async Task<long> AddByExcelAsync(DataTable dt)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                string userCode = string.Empty;
+                long userId = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    do
+                    {
+                        userCode = CommonHelper.GetNumberCaptcha(6);
+                        userId = await dbc.GetIdAsync<UserEntity>(u => u.Code == userCode);
+                    } while (userId != 0);
+
+                    UserEntity recUser;
+                    if (string.IsNullOrWhiteSpace(row["推荐人"].ToString()))
+                    {
+                        recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.Id == 1);
+                    }
+                    else
+                    {
+                        recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.TrueName == row["推荐人"].ToString());
+                    }
+
+                    try
+                    {
+                        UserEntity user = new UserEntity();
+                        user.UserCode = userCode;
+                        user.LevelId = 1;
+                        user.Mobile = row["电话"].ToString();
+                        user.Salt = CommonHelper.GetCaptcha(4);
+                        user.Password = CommonHelper.GetMD5("123456" + user.Salt);
+                        //user.TradePassword = "";// tradePassword;// CommonHelper.GetMD5(tradePassword + user.Salt);
+                        user.NickName = "无昵称";
+                        user.HeadPic = "/images/headpic.png";
+
+                        user.RecommendId = recUser.Id;
+                        user.RecommendGenera = recUser.RecommendGenera + 1;
+                        user.RecommendPath = recUser.RecommendPath;
+                        user.RecommendCode = recUser.Mobile;
+
+                        dbc.Users.Add(user);
+                        await dbc.SaveChangesAsync();
+
+                        var userModel = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(s => s.Id == user.Id);
+                        user.RecommendPath = user.RecommendPath + "-" + user.Id;
+                        await dbc.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        //  scope.Rollback();
+                        log.ErrorFormat("AddAsync:{0}", ex.ToString());
+                        return -3;
+                    }
+                }
+                return 1;
             }
         }
 
