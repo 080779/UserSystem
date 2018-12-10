@@ -101,7 +101,7 @@ namespace IMS.Service.Service
                 if (price == 0)
                 {
                     var settingEntity = await dbc.GetAll<SettingEntity>().AsNoTracking().FirstOrDefaultAsync(s=>s.Name== "默认A积分价格");
-                    price = decimal.Parse(settingEntity.Parm);
+                    price = decimal.Parse(settingEntity.Param);
                 }
                 return price;
             }

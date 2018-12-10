@@ -8,10 +8,10 @@ namespace IMS.Service.Config
         public SettingConfig()
         {
             ToTable("tb_settings");
+            Property(s => s.ParamName).HasMaxLength(50).IsRequired();
             Property(s => s.Name).HasMaxLength(50).IsRequired();
-            Property(s => s.Parm).HasMaxLength(50).IsRequired();
-            Property(s => s.Description).HasMaxLength(100);
-            HasRequired(s => s.SettingType).WithMany().HasForeignKey(s => s.SettingTypeId).WillCascadeOnDelete(false);
+            Property(s => s.Param).HasMaxLength(256).IsRequired();
+            Property(s => s.Remark).HasMaxLength(100);
         }
     }
 }

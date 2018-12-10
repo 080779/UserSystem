@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LinkDTO.cs" />
-    <Compile Include="NewsDTO.cs" />
     <Compile Include="CourseOrderDTO.cs" />
     <Compile Include="SettingTypeDTO.cs" />
     <Compile Include="UserAccountDTO.cs" />
@@ -77,7 +76,6 @@
     <Compile Include="AdminDTO.cs" />
     <Compile Include="AdminLogDTO.cs" />
     <Compile Include="BaseDTO.cs" />
-    <Compile Include="NavBarDTO.cs" />
     <Compile Include="PermissionDTO.cs" />
     <Compile Include="PermissionTypeDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

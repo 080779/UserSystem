@@ -38,8 +38,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             if (string.IsNullOrEmpty(content))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "公告内容不能为空" });
-            }            
-            long id = await noticeService.AddAsync(code, content, failureTime);
+            }
+            long id = await noticeService.AddAsync(code, content, failureTime, Convert.ToInt64(Session["Platform_AdminUserId"]));
             if (id <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加公告失败" });

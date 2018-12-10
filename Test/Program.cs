@@ -108,7 +108,7 @@ namespace Test
                 };
 
                 long stateId = dbc.GetId<IdNameEntity>(i => i.Name == "已完成");
-                string val = dbc.GetParameter<SettingEntity>(s => s.Name == "自动确认收货时间", s => s.Parm);
+                string val = dbc.GetParameter<SettingEntity>(s => s.Name == "自动确认收货时间", s => s.Param);
                 double day;
                 double.TryParse(val, out day);
                 if (day == 0)
@@ -123,7 +123,7 @@ namespace Test
                     order.EndTime = DateTime.Now;
                     order.OrderStateId = stateId;
                 }
-                val = dbc.GetParameter<SettingEntity>(s => s.Name == "不能退货时间", s => s.Parm);
+                val = dbc.GetParameter<SettingEntity>(s => s.Name == "不能退货时间", s => s.Param);
                 double.TryParse(val, out day);
                 if (day == 0)
                 {

@@ -9,6 +9,7 @@ namespace IMS.Service.Config
         {
             ToTable("tb_users");
             Property(p => p.UserCode).HasMaxLength(20);
+            Property(p => p.TrueName).HasMaxLength(50);
             Property(p => p.Mobile).HasMaxLength(50).IsRequired();
             Property(p => p.Code).HasMaxLength(50);
             Property(p => p.NickName).HasMaxLength(50);

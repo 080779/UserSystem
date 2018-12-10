@@ -14,7 +14,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     public class NewsController : Controller
     {
         private int pageSize = 10;
-        public INewsService newsService { get; set; }
+        public INoticeService noticeService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -23,7 +23,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         //[AdminLog("新闻管理", "查看新闻管理列表")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            var result = await newsService.GetModelListAsync(keyword, startTime, endTime, pageIndex, pageSize);
+            var result = await noticeService.GetModelListAsync(keyword, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         [ValidateInput(false)]
@@ -39,7 +39,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "新闻内容不能为空" });
             }            
-            long id = await newsService.AddAsync(code, content, failureTime,Convert.ToInt64(Session["Platform_AdminUserId"]));
+            long id = await noticeService.AddAsync(code, content, failureTime,Convert.ToInt64(Session["Platform_AdminUserId"]));
             if (id <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加新闻失败" });
@@ -49,7 +49,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         public async Task<ActionResult> GetModel(long id)
         {
-            NewsDTO model = await newsService.GetModelAsync(id);
+            var model = await noticeService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data = model });
         }
 
@@ -66,7 +66,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "新闻内容不能为空" });
             }
-            bool flag = await newsService.UpdateAsync(id, code, content, failureTime);
+            bool flag = await noticeService.UpdateAsync(id, code, content, failureTime);
 
             if (!flag)
             {
@@ -78,7 +78,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         //[Permission("新闻管理_删除新闻")]
         public async Task<ActionResult> Del(long id)
         {
-            bool flag = await newsService.DeleteAsync(id);
+            bool flag = await noticeService.DeleteAsync(id);
             if (!flag)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "删除新闻失败" });

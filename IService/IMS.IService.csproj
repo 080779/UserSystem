@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="ICourseOrderService.cs" />
     <Compile Include="ILinkService.cs" />
-    <Compile Include="INewsService.cs" />
     <Compile Include="ISettingTypeService.cs" />
     <Compile Include="IUserAccountService.cs" />
     <Compile Include="IBonusService.cs" />

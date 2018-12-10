@@ -9,6 +9,7 @@ namespace IMS.DTO
     public class BonusDTO : BaseDTO
     {
         public long UserId { get; set; }
+        public string UserMobile { get; set; }
         public int TypeID { get; set; }// 
         public decimal Amount { get; set; }// 
         public decimal Revenue { get; set; }// 

@@ -96,7 +96,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View(typeId);
         }
         [HttpPost]
-        public async Task<ActionResult> List(long typeId, bool flag = true)
+        public async Task<ActionResult> List(int typeId, bool flag = true)
         {
             var model = await settingService.GetByTypeIdAsync(typeId);
             return Json(new AjaxResult { Status = 1, Data = model });
@@ -105,7 +105,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         #region 添加参数
         [HttpPost]
-        public async Task<ActionResult> Add(string name, string parm, string description, long typeId, int sort=1)
+        public async Task<ActionResult> Add(string name, string parm, string description, int typeId, int sort=1)
         {
             var res = await settingService.AddAsync(name, parm, description, sort, typeId);
             if (res <= 0)

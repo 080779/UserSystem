@@ -13,7 +13,6 @@ using System.Web.Mvc;
 
 namespace IMS.Web.Controllers
 {
-    [AllowAnonymous]
     public class RecommendTreeController : Controller
     {
         public IUserService userService { get; set; }
@@ -55,7 +54,7 @@ namespace IMS.Web.Controllers
                 {
                     user = await userService.GetModelTreeAsync(uid);
                     list = await userService.GetRecommendListAsync(user.Id);
-                    treeText = Treetext(user.Mobile, user.TeamScore, user.MLevelName,user.LevelName);
+                    treeText = Treetext(user.Mobile, user.Amount, user.LevelName);
                 }
                 else
                 {
@@ -86,11 +85,11 @@ namespace IMS.Web.Controllers
                     var list2 = await userService.GetRecommendListAsync(list[i].Id);
                     if (list2.Count() > 0)
                     {
-                        sb.Append("\"text\":\"" + Treetext(list[i].Mobile, list[i].TeamScore, list[i].MLevelName, list[i].LevelName) + "\",\"children\":true,\"id\":\"" + list[i].Id + "\"");
+                        sb.Append("\"text\":\"" + Treetext(list[i].Mobile, list[i].Amount, list[i].LevelName) + "\",\"children\":true,\"id\":\"" + list[i].Id + "\"");
                     }
                     else
                     {
-                        sb.Append("\"text\":\"" + Treetext(list[i].Mobile, list[i].TeamScore, list[i].MLevelName, list[i].LevelName) + "\"");
+                        sb.Append("\"text\":\"" + Treetext(list[i].Mobile, list[i].Amount, list[i].LevelName) + "\"");
                     }
 
                     if (i != list.Count() - 1)
@@ -174,10 +173,10 @@ namespace IMS.Web.Controllers
         }
         #endregion
 
-        private string Treetext(string mobile,decimal teamScore,string mLevelName,string levelName)
+        private string Treetext(string mobile,decimal amount, string levelName)
         {
             string treeText = "";
-            treeText = "<span style='color:green;'>" + mobile + "</span>|<span style='color:green;'>" + levelName + "</span>|<span style='color:green;'>" + teamScore + "</span> ";
+            treeText = "<span style='color:green;'>" + mobile + "</span>|<span style='color:green;'>" + levelName + "</span>|<span style='color:green;'>" + amount + "</span> ";
             return treeText;
         }
     }

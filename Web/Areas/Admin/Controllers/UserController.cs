@@ -4,6 +4,7 @@ using IMS.IService;
 using IMS.Service;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.User;
+using SDMS.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -168,17 +169,18 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         #endregion
 
-        #region 激活会员
+        #region 导入用户
         //[AdminLog("会员管理", "删除用户")]
         //[Permission("会员管理_删除用户")]
-        public async Task<ActionResult> Activate(long id)
+        public ActionResult Import(HttpPostedFileBase excelFile)
         {
-            bool res = await userService.ActivateAsync(id);
-            if (!res)
+            var res = ExcelHelper.SaveExecl(excelFile);
+            if(!res.Key)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "激活会员失败" });
+                return Json(new AjaxResult { Status = 0, Msg = res.Value });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "激活会员成功" });
+            var dt = ExcelHelper.GetDataTable(res.Value);
+            return Json(new AjaxResult { Status = 1, Msg = "导入成功" });
         }
         #endregion
 

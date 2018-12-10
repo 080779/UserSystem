@@ -1,0 +1,30 @@
+﻿@model IMS.DTO.SettingDTO[]
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="container">
+        <div class="row m-b-20">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div class="grid-title">
+                        <h4>会员权益</h4>
+                    </div>
+                    <div style="margin-top:50px;" class="row" id="app">
+                        <div class="form-horizontal col-sm-12">
+                            @foreach(var setting in Model)
+                            {
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">@setting.Name：</label>
+                                    <div class="col-md-9">
+                                        @setting.Param
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

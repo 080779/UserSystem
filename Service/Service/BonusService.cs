@@ -32,6 +32,7 @@ namespace IMS.Service.Service
             dto.IsSettled = entity.IsSettled;
             dto.SttleTime = entity.SttleTime;
             dto.FromUserID = entity.FromUserID;
+            dto.UserMobile = entity.User.Mobile;
             return dto;
         }
         public async Task<long> AddAsync(long userId, decimal amount, decimal revenue, decimal sf, string source, long fromUserID, int isSettled)
@@ -163,7 +164,7 @@ namespace IMS.Service.Service
                         bonusName = "二级直推奖";
 
                     SettingEntity bonusRatio = await dbc.GetAll<SettingEntity>().AsNoTracking().SingleOrDefaultAsync(b => b.Name == bonusName);
-                    decimal.TryParse(bonusRatio.Parm, out bonusRate);
+                    decimal.TryParse(bonusRatio.Param, out bonusRate);
                     bonus = amount * bonusRate / 100;
 
                     recEntity.BonusAmount += bonus; //A积分
@@ -232,7 +233,7 @@ namespace IMS.Service.Service
                             continue;
                         }
 
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.ParamName == "极差奖金比例" && s.LevelId == _mLevel, s => s.Parm), out currRate);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.ParamName == "极差奖金比例" && s.LevelId == _mLevel, s => s.Param), out currRate);
                         if (currRate > lastRate)
                         {
                             bonusRate = currRate - lastRate;
@@ -243,7 +244,7 @@ namespace IMS.Service.Service
                         if (bonusRate > 0)
                         {
                             decimal bonusTopRate = 0, bonusTop = 0;
-                            decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.ParamName == "极差奖额度" && s.LevelId == _level, s => s.Parm), out bonusTopRate);
+                            decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.ParamName == "极差奖额度" && s.LevelId == _level, s => s.Param), out bonusTopRate);
                             decimal bonusAll = await dbc.GetAll<BonusEntity>().Where(b => b.UserId == recEntity.Id && b.TypeID == 4).SumAsync(b => (decimal?)b.sf) ?? 0;
 
                             bonusTop = recEntity.PersonalScore * bonusTopRate / 100;
@@ -324,12 +325,12 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 decimal bonusRate = 0, bonusAvg = 0, bonusSf = 0;
-                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.ParamName == "最高极差奖级别平分", s => s.Parm), out bonusRate);
+                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.ParamName == "最高极差奖级别平分", s => s.Param), out bonusRate);
                 int journalTypeId = 1;
                 bonus = amount * bonusRate / 100;
                 //获奖用户
                 var settingEntity = dbc.GetAll<SettingEntity>().AsNoTracking().Where(w => w.ParamName == "极差奖额度")
-                    .Select(s => new SettingModel { LevelId = s.LevelId, Parm = s.Parm}).ToList();
+                    .Select(s => new SettingModel { LevelId = s.LevelId, Parm = s.Param }).ToList();
                 var userEntity =  dbc.GetAll<UserEntity>().AsNoTracking()
                     .Where(u => u.IsNull == false && u.MLevelId == 6 && u.LevelId < 10)
                     .Select(s=>new UserModel { Id = s.Id, LevelId = s.LevelId }).ToList();
@@ -407,7 +408,7 @@ namespace IMS.Service.Service
             {
                 int journalTypeId = 1;
                 decimal parm;
-                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "购物奖励", s => s.Parm), out parm);
+                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "购物奖励", s => s.Param), out parm);
                 var user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == buyerId);
                 decimal bonus = profit * (parm / 100);
 
@@ -468,10 +469,10 @@ namespace IMS.Service.Service
                 int? prizeLevel = await dbc.GetAll<BonusEntity>().Where(b => b.UserId == buyerId && b.TypeID == 2).MaxAsync(b => b.Bonus001);
                 decimal amount = user.PersonalScore;
                 decimal totalAmount1, totalAmount2, totalAmount3, totalAmount4;
-                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级一额度", s => s.Parm), out totalAmount1);
-                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二额度", s => s.Parm), out totalAmount2);
-                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三额度", s => s.Parm), out totalAmount3);
-                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四额度", s => s.Parm), out totalAmount4);
+                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级一额度", s => s.Param), out totalAmount1);
+                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二额度", s => s.Param), out totalAmount2);
+                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三额度", s => s.Param), out totalAmount3);
+                decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四额度", s => s.Param), out totalAmount4);
 
                 if (amount < totalAmount1)
                 {
@@ -485,25 +486,25 @@ namespace IMS.Service.Service
                 {
                     if(amount >= totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Param), out parm);
                         bonus = parm * totalAmount4 / 100;
                         prizeLevel = 4;
                     }
                     else if(amount >= totalAmount3 && amount < totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Param), out parm);
                         bonus = parm * totalAmount3 / 100;
                         prizeLevel = 3;
                     }
                     else if(amount >= totalAmount2 && amount < totalAmount3)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二比例", s => s.Param), out parm);
                         bonus = parm * totalAmount2 / 100;
                         prizeLevel = 2;
                     }
                     else if (amount >= totalAmount1 && amount < totalAmount2)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级一比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级一比例", s => s.Param), out parm);
                         bonus = parm * totalAmount1 / 100;
                         prizeLevel = 1;
                     }
@@ -512,19 +513,19 @@ namespace IMS.Service.Service
                 {
                     if (amount >= totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Param), out parm);
                         bonus = parm * (totalAmount4 - totalAmount1) / 100;
                         prizeLevel = 4;
                     }
                     else if (amount >= totalAmount3 && amount < totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Param), out parm);
                         bonus = parm * (totalAmount3 - totalAmount1) / 100;
                         prizeLevel = 3;
                     }
                     else if (amount >= totalAmount2 && amount < totalAmount3)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二比例", s => s.Param), out parm);
                         bonus = parm * (totalAmount2 - totalAmount1) / 100;
                         prizeLevel = 2;
                     }
@@ -533,13 +534,13 @@ namespace IMS.Service.Service
                 {
                     if (amount >= totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Param), out parm);
                         bonus = parm * (totalAmount4 - totalAmount2) / 100;
                         prizeLevel = 4;
                     }
                     else if (amount >= totalAmount3 && amount < totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Param), out parm);
                         bonus = parm * (totalAmount3 - totalAmount2) / 100;
                         prizeLevel = 3;
                     }
@@ -548,32 +549,32 @@ namespace IMS.Service.Service
                 {
                     if (amount >= totalAmount4)
                     {
-                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Parm), out parm);
+                        decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Param), out parm);
                         bonus = parm * (totalAmount4 - totalAmount3) / 100;
                         prizeLevel = 4;
                     }                    
                 }
                 //else if (amount >= totalAmount1 && amount < totalAmount2)
                 //{
-                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级一比例", s => s.Parm), out parm);
+                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级一比例", s => s.Param), out parm);
                 //    bonus = parm * totalAmount1 / 100;
                 //    prizeLevel = 1;
                 //}
                 //else if (amount >= totalAmount2 && amount < totalAmount3 && prizeLevel == 1)
                 //{
-                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二比例", s => s.Parm), out parm);
+                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级二比例", s => s.Param), out parm);
                 //    bonus = parm * (totalAmount2 - totalAmount1) / 100;
                 //    prizeLevel++;
                 //}
                 //else if (amount >= totalAmount3 && amount < totalAmount4 && prizeLevel == 2)
                 //{
-                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Parm), out parm);
+                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级三比例", s => s.Param), out parm);
                 //    bonus = parm * (totalAmount3 - totalAmount2) / 100;
                 //    prizeLevel++;
                 //}
                 //else if (amount >= totalAmount4  && prizeLevel == 3)
                 //{
-                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Parm), out parm);
+                //    decimal.TryParse(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "订单金额累计等级四比例", s => s.Param), out parm);
                 //    bonus = parm * (totalAmount4 - totalAmount3) / 100;
                 //    prizeLevel++;
                 //}

@@ -168,7 +168,7 @@
             },
             getpage: function () {
                 this.$http.post('/admin/news/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                    this.notices = result.data.data.news;
+                    this.notices = result.data.data.notices;
                     this.pages.all = result.data.data.pageCount;
                 })
             },
@@ -349,10 +349,7 @@
                     that.edits.failureTime = date;
                 }
             });
-            this.$http.post('/admin/news/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                this.notices = result.data.data.news;
-                this.pages.all = result.data.data.pageCount;
-            })
+            this.getpage();
         }
     });
 

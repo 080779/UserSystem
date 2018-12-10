@@ -13,6 +13,7 @@ namespace IMS.DTO
         public string Mobile { get; set; }
         public string Code { get; set; }
         public string NickName { get; set; }
+        public string TrueName { get; set; }
         public string HeadPic { get; set; }
         public decimal Amount { get; set; }
         public decimal FrozenAmount { get; set; }
@@ -49,8 +50,7 @@ namespace IMS.DTO
         public long Id { get; set; }
         public long ShopUID { get; set; }
         public string Mobile { get; set; }
-        public decimal TeamScore { get; set; }
-        public string MLevelName { get; set; }
+        public decimal Amount { get; set; }
         public string LevelName { get; set; }
     }
 }

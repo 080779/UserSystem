@@ -13,7 +13,7 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
-        Task<long> AddAsync(string mobile,  int levelTypeId, string password, string tradePassword, string recommendMobile, string nickName, string avatarUrl);
+        Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
         /// <summary>
         /// 修改头像，昵称
@@ -32,6 +32,12 @@ namespace IMS.IService
         /// <param name="id"></param>
         /// <returns></returns>
         Task<bool> ActivateAsync(long id);
+        /// <summary>
+        /// 批量激活会员
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<bool> ActivateAllAsync(long[] ids);
         /// <summary>
         /// 删除用户
         /// </summary>
@@ -71,6 +77,7 @@ namespace IMS.IService
         Task<long> GetUserRecommendIdAysnc(long userId);
         Task<UserRecommendTreeDTO> GetModelTreeAsync(long id);
         Task<string> GetMobileByIdAsync(long id);
+        Task<string> GetUserCodeByIdAsync(long id);
         /// <summary>
         /// 根据用户账号获得用户模型
         /// </summary>
@@ -107,6 +114,7 @@ namespace IMS.IService
         Task<int> SetMLevelUpAsync(string mobile, int levelId);
         Task<string> SearchMlevelNameAsync(string mobile);
         Task<UserRecommendTreeDTO[]> GetRecommendListAsync(long id);
+        Task<UserSearchResult> GetActivateListAsync(int pageIndex, int pageSize);
     }
     public class UserSearchResult
     {
