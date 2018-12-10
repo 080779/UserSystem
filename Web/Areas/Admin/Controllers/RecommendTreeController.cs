@@ -18,9 +18,9 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         #region 直推图页面
         [HttpGet]
-        public ActionResult Info()
+        public ActionResult Info(long id)
         {
-            return View(1);
+            return View(id);
         }
         #endregion
 
@@ -106,15 +106,15 @@ namespace IMS.Web.Areas.Admin.Controllers
         #region 直推图搜索数据
         public async Task<string> Search(string mobile, string token, string id)
         {
-            if (string.IsNullOrEmpty(token))
-            {
-                return "token不能为空";
-            }
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //    return "token不能为空";
+            //}
 
-            if (!Valid(token))
-            {
-                return "token_invalid";
-            }
+            //if (!Valid(token))
+            //{
+            //    return "token_invalid";
+            //}
             long res;
             if (!string.IsNullOrEmpty(mobile))
             {

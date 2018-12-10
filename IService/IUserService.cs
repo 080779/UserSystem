@@ -33,6 +33,12 @@ namespace IMS.IService
         /// <returns></returns>
         Task<bool> ActivateAsync(long id);
         /// <summary>
+        /// 批量激活会员
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<bool> ActivateAllAsync(long[] ids);
+        /// <summary>
         /// 删除用户
         /// </summary>
         /// <param name="id">用户id</param>
@@ -108,6 +114,7 @@ namespace IMS.IService
         Task<int> SetMLevelUpAsync(string mobile, int levelId);
         Task<string> SearchMlevelNameAsync(string mobile);
         Task<UserRecommendTreeDTO[]> GetRecommendListAsync(long id);
+        Task<UserSearchResult> GetActivateListAsync(int pageIndex, int pageSize);
     }
     public class UserSearchResult
     {

@@ -54,6 +54,7 @@ namespace IMS.Service.Service
             dto.PersonalScore = entity.PersonalScore;
             dto.MLevelId = entity.MLevelId;
             dto.BonusDiffTotal = entity.BonusDiffTotal;
+            dto.TrueName = entity.TrueName;
             return dto;
         }
 
@@ -235,6 +236,25 @@ namespace IMS.Service.Service
                 }
                 //激活会员
                 entity.IsUpgraded = true;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
+        public async Task<bool> ActivateAllAsync(long[] ids)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                //批量激活会员
+                foreach (var id in ids)
+                {
+                    UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
+                    if (entity == null)
+                    {
+                        return false;
+                    }
+                    entity.IsUpgraded = true;
+                }
                 await dbc.SaveChangesAsync();
                 return true;
             }
@@ -1008,6 +1028,20 @@ namespace IMS.Service.Service
                 var users = dbc.GetAll<UserEntity>().Where(u => u.RecommendId == id);
                 var res = await users.ToListAsync();
                 return res.Select(u=>ToDTO(u,u.MLevelId)).ToArray();
+            }
+        }
+
+        public async Task<UserSearchResult> GetActivateListAsync(int pageIndex,int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserSearchResult result = new UserSearchResult();
+                var users = dbc.GetAll<UserEntity>().AsNoTracking().Where(u => u.IsUpgraded == false);
+                
+                result.PageCount = (int)Math.Ceiling((await users.LongCountAsync()) * 1.0f / pageSize);
+                var userResult = await users.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Users = userResult.Select(a => ToDTO(a)).ToArray();
+                return result;
             }
         }
 

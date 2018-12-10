@@ -15,13 +15,14 @@ namespace IMS.Web.Areas.Admin.Controllers
         public ISettingService settingService { get; set; }
         public IPermissionTypeService permissionTypeService { get; set; }
         public IOrderService orderService { get; set; }
-        public async Task<ActionResult> Index()        {
+        public async Task<ActionResult> Index()
+        {
 
             long userId = Convert.ToInt64(Session["Platform_AdminUserId"]);
             HomeIndexViewModel model = new HomeIndexViewModel();
             model.Mobile = (await adminService.GetModelAsync(userId)).Mobile;
             model.PermissionTypes = await permissionTypeService.GetModelList();
-            model.SysTitle= await settingService.GetParmByNameAsync("系统标题");
+            //model.SysTitle= await settingService.GetParmByNameAsync("系统标题");
             return View(model);
         }
         public ActionResult Home()

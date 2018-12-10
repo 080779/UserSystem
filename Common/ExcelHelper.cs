@@ -1,4 +1,5 @@
-﻿using NPOI.HSSF.UserModel;
+﻿using IMS.Common;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace SDMS.Common
 {
@@ -68,6 +70,24 @@ namespace SDMS.Common
             ms.Seek(0, SeekOrigin.Begin);
             ms.AllowClose = true;
             return ms;
+        }
+        #endregion
+        
+        #region 上传excel保存到服务器，返回fullPath
+        public static KeyValuePair<bool,string> SaveExecl(HttpPostedFileBase excelFile)
+        {
+            string[] excelFormats = { ".xlsx", ".xls", ".XLSX", ".XLS" };
+            string md5 = CommonHelper.GetMD5(excelFile.InputStream);
+            string ext = Path.GetExtension(excelFile.FileName);
+            if (!excelFormats.Contains(ext))
+            {
+                return new KeyValuePair<bool, string>(false, "请上传excel文件");
+            }
+            string path = "/upload/" + DateTime.Now.ToString("yyyy") + "/" + md5 + ext;
+            string fullPath = HttpContext.Current.Server.MapPath("~" + path);
+            new FileInfo(fullPath).Directory.Create();
+            excelFile.SaveAs(fullPath);
+            return new KeyValuePair<bool, string>(true, fullPath);
         }
         #endregion
 

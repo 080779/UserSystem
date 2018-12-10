@@ -39,13 +39,12 @@
 
 <body>
     <div id="app">
-        @*<div class="clearfix" style="margin-top:20px">
+        <div class="clearfix" style="margin-top:20px">
             <span class="l_f">
-                <a v-on:click="add" class="btn btn-success"><i class="icon-plus"></i>添加用户</a>
-                <a v-on:click="upset" class="btn btn-success"><i class="icon-plus"></i>升级设置</a>
-              
+                <input type="file" style="display:inline-block;width:320px;height:28px;border:1px solid gray;"  id="excelFile" />
+                <a v-on:click="importExcel" class="btn btn-success"><i class="icon-plus"></i>导入用户</a>
             </span>
-        </div>*@
+        </div>
         <div class="search_style">
             <ul class="search_content clearfix">
                 <li>
@@ -73,13 +72,14 @@
                     <tr>
                         <th width="60">编号</th>
                         <th width="100">注册时间</th>
-                        <th width="100">UID</th>
-                        <th width="100">昵称</th>
-                        <th width="120">等级</th>
+                        <th width="60">UID</th>
+                        <th width="60">姓名</th>
+                        <th width="80">手机号</th>
+                        <th width="80">等级</th>
                         <th width="80">余额</th>
                         <th width="60">激活状态</th>
                         <th width="60">状态</th>
-                        <th width="120">操作</th>
+                        <th width="250">操作</th>
                     </tr>
                 </thead>
                 <tbody v-for="user in users">
@@ -87,7 +87,8 @@
                         <td v-html="user.id"></td>
                         <td v-html="user.createTime"></td>
                         <td v-html="user.userCode"></td>
-                        <td v-html="user.nickName"></td>
+                        <td v-html="user.trueName"></td>
+                        <td v-html="user.mobile"></td>
                         <td v-html="user.levelName"></td>
                         <td v-html="user.amount"></td>
                         <td v-html="user.isUpgraded==true?'已激活':'未激活'"></td>
@@ -96,7 +97,7 @@
                             <a v-on:click="resetpwd(user.id,user.mobile)" href="javascript:;" title="重置密码" class="btn btn-xs btn-success">重置密码</a>
                             <a v-on:click="frozen(user.id,user.isEnabled)" href="javascript:;" title="冻结用户" class="btn btn-xs btn-success" v-html="user.isEnabled?'冻结用户':'解冻用户'"></a>
                             <a title="删除用户" href="javascript:;" v-on:click="del(user.id)" class="btn btn-xs btn-warning">删除用户</a>
-                            <a title="激活" href="javascript:;" v-if="user.isUpgraded==false" v-on:click="activate(user.id)" class="btn btn-xs btn-warning">激活用户</a>
+                            <a title="直推图" href="javascript:;" v-on:click="tree(user.id)" class="btn btn-xs btn-warning">直推图</a>
                         </td>
                     </tr>
                 </tbody>
@@ -208,10 +209,6 @@
             getpage: function () {
                 this.$http.post('/admin/user/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.users = result.data.data.users;
-                    //this.pages.all = result.data.data.pageCount;
-                    //this.userUps = result.data.data.userUps;
-                    //this.discounts = result.data.data.discounts;
-                    //this.threeplay = result.data.data.threePlay;
                 })
             },
             pageclick: function (index) {//页码点击事件
@@ -228,6 +225,24 @@
                     this.pages.cur = this.pages.txtpage;
                 }
                 this.getpage();
+            },
+            importExcel: function () {
+                var excelFile = $("#excelFile").val();
+                if (excelFile == "") {
+                    layer.alert("请选择excel文件", { icon: 0, title: '提示框' });
+                    return;
+                }
+                console.log(excelFile);
+                if (excelFile.indexOf('xls') < 0 && excelFile.indexOf('xlsx') < 0) {
+                    layer.alert("请选择excel文件", { icon: 0, title: '提示框' });
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append("excelFile", $("#excelFile")[0].files[0]);
+                this.$http.post('/admin/user/import', formData, { emulateJSON: true }).then(function (result) {
+                    this.users = result.data.data.users;
+                })
             },
             add: function () {
                 var that = this;
@@ -403,25 +418,8 @@
                     });
                 });
             },
-            activate: function (id) {
-                var that = this;
-                layer.confirm("确认激活会员吗？", { icon: 0, title: '是否激活会员' }, function (index) {
-                    that.$http.post('/admin/user/activate', { id: id }, { emulateJSON: true }).then(function (result) {
-                        if (result.data.status == 1) {
-                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                            that.getpage();
-                        }
-                        else if (result.data.status == 0) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        }
-                        else if (result.data.status == 302) {
-                            window.location.href = result.data.data;
-                        }
-                        else if (result.data.status == 401) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        }
-                    });
-                });
+            tree: function (id) {
+                window.location.href = "/admin/recommendtree/info/" + id;
             },
             search: function () {
                 this.getpage();

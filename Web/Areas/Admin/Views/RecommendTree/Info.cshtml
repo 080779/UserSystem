@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width" />
     <title>直接推荐图</title>
     <link href="~/css/themes/Base.css" rel="stylesheet" />
-    <link href="~/js/themes/default/style.min.css" rel="stylesheet" />
+    <link href="~/js/Scripts/themes/default/style.min.css" rel="stylesheet" />
     <link href="~/css/themes/default/easyui.css" rel="stylesheet" />
-    <script src="~/js/jquery-1.10.2.min.js"></script>
+    <script src="~/Areas/Admin/js/jquery-1.9.1.min.js"></script>
     <script src="~/js/jquery.easyui.min.js"></script>
-    <script src="~/js/jstree.min.js"></script>
     <style>
         #tree a {
             text-decoration: none;
@@ -25,7 +24,7 @@
             <div class="row">
                 会员账号：<input type="text" id="txtMobile" />
                     <button type="button" class="easyui-linkbutton" onclick="Serach()">查询</button>
-                    <button type="button" class="easyui-linkbutton" onclick="up()">up</button>
+                    @*<button type="button" class="easyui-linkbutton" onclick="up()">up</button>*@
                 <input type="hidden" id="userId" value="@Model" />
                 <div class="col-md-10">
                     <!--内容开始-->
@@ -52,7 +51,7 @@
             $('#red').jstree({
                 'core': {
                     'data': {
-                        "url": "/recommendtree/get?uid=" + userId + "",
+                        "url": "/admin/recommendtree/get?uid=" + userId + "",
                         "dataType": "json",
                         "data": function (node) {
                             return { "id": node.id };
@@ -70,7 +69,7 @@
             $('#red').jstree({
                 'core': {
                     'data': {
-                        "url": "/recommendtree/search?mobile=" + mobile + "",
+                        "url": "/admin/recommendtree/search?mobile=" + mobile + "",
                         "dataType": "json",
                         "data": function (node) {
                             return { "id": node.id };
@@ -88,7 +87,7 @@
             $('#red').jstree({
                 'core': {
                     'data': {
-                        "url": "/recommendtree/up?&uid=" + userId + "",
+                        "url": "/admin/recommendtree/up?&uid=" + userId + "",
                         "dataType": "json",
                         "data": function (node) {
                             return { "id": node.id };
