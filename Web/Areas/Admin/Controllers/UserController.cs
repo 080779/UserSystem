@@ -172,7 +172,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         #region 导入用户
         //[AdminLog("会员管理", "删除用户")]
         //[Permission("会员管理_删除用户")]
-        public ActionResult Import(HttpPostedFileBase excelFile)
+        public async Task<ActionResult> Import(HttpPostedFileBase excelFile)
         {
             var res = ExcelHelper.SaveExecl(excelFile);
             if(!res.Key)
@@ -180,6 +180,11 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = res.Value });
             }
             var dt = ExcelHelper.GetDataTable(res.Value);
+            var result = await userService.AddByExcelAsync(dt);
+            if(result<=0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "导入失败" });
+            }
             return Json(new AjaxResult { Status = 1, Msg = "导入成功" });
         }
         #endregion
