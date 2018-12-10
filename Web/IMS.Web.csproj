@@ -828,6 +828,7 @@
     <Content Include="Areas\Admin\Views\RecommendTree\Info.cshtml" />
     <Content Include="Areas\Admin\Views\Bonus\List.cshtml" />
     <Content Include="Areas\Admin\Views\Activate\List.cshtml" />
+    <Content Include="doc\创客社区申请表-副本.xlsx" />
     <None Include="Properties\PublishProfiles\NN18101539.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
