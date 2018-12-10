@@ -23,9 +23,10 @@ namespace IMS.Service.Service
             dto.FailureTime = entity.FailureTime;
             dto.IsEnabled = entity.IsEnabled;
             dto.Url = entity.Url;
+            dto.Creator = entity.Creator;
             return dto;
         }
-        public async Task<long> AddAsync(string code,string content, DateTime failureTime)
+        public async Task<long> AddAsync(string code,string content, DateTime failureTime, long creatorId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -33,6 +34,7 @@ namespace IMS.Service.Service
                 entity.Code = code;
                 entity.Content = content;
                 entity.Url = "";
+                entity.Creator = await dbc.GetParameterAsync<AdminEntity>(a => a.Id == creatorId, a => a.Mobile);
                 entity.FailureTime = failureTime;
                 if(entity.FailureTime>DateTime.Now)
                 {

@@ -9,7 +9,7 @@ namespace IMS.IService
     /// </summary>
     public interface INoticeService : IServiceSupport
     {
-        Task<long> AddAsync(string code, string content, DateTime failureTime);
+        Task<long> AddAsync(string code, string content, DateTime failureTime, long creatorId);
         Task<bool> UpdateAsync(long id, string code, string content, DateTime failureTime);
         Task<bool> DeleteAsync(long id);
         Task<NoticeDTO> GetModelAsync(long id);

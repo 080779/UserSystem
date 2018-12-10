@@ -199,9 +199,9 @@ namespace IMS.Service.Service
                         decimal discount2;
                         decimal discount3;
 
-                        string discountstr1 = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "普通会员优惠", s => s.Parm);
-                        string discountstr2 = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "黄金会员优惠", s => s.Parm); 
-                        string discountstr3 = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "铂金会员优惠", s => s.Parm); 
+                        string discountstr1 = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "普通会员优惠", s => s.Param);
+                        string discountstr2 = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "黄金会员优惠", s => s.Param); 
+                        string discountstr3 = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "铂金会员优惠", s => s.Param); 
 
                         decimal.TryParse(discountstr1, out discount1);
                         discount1 = discount1 == 0 ? 1 : discount1;
@@ -673,7 +673,7 @@ namespace IMS.Service.Service
                 {
                     return -6;
                 }
-                string val = await dbc.GetParameterAsync<SettingEntity>(s=>s.Name== "不能退货时间", s=>s.Parm);
+                string val = await dbc.GetParameterAsync<SettingEntity>(s=>s.Name== "不能退货时间", s=>s.Param);
 
                 if (order.EndTime!=null && DateTime.Now > order.EndTime.Value.AddDays(Convert.ToDouble(val)))
                 {
@@ -705,7 +705,7 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
-                decimal percent = Convert.ToDecimal(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "退货扣除比例", s => s.Parm)) / 100;
+                decimal percent = Convert.ToDecimal(await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "退货扣除比例", s => s.Param)) / 100;
                 order.ApplyTime = DateTime.Now;
                 order.ReturnAmount = totalDiscountReturnAmount;
                 order.DeductAmount = totalDiscountReturnAmount * percent;
@@ -866,7 +866,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 long stateId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "已完成");
-                string val = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "自动确认收货时间", s => s.Parm);
+                string val = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "自动确认收货时间", s => s.Param);
                 double day;
                 double.TryParse(val, out day);
                 if (day == 0)
@@ -879,7 +879,7 @@ namespace IMS.Service.Service
                     order.EndTime = DateTime.Now;
                     order.OrderStateId = stateId;
                 }
-                val = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "不能退货时间", s => s.Parm);
+                val = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "不能退货时间", s => s.Param);
                 double.TryParse(val, out day);
                 if (day == 0)
                 {
@@ -919,7 +919,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 long stateId = dbc.GetId<IdNameEntity>(i=>i.Name== "已完成");
-                string val = dbc.GetParameter<SettingEntity>(s=>s.Name== "自动确认收货时间",s=>s.Parm);
+                string val = dbc.GetParameter<SettingEntity>(s=>s.Name== "自动确认收货时间",s=>s.Param);
                 double day;
                 double.TryParse(val, out day);
                 if(day==0)
@@ -934,7 +934,7 @@ namespace IMS.Service.Service
                     order.EndTime = DateTime.Now;
                     order.OrderStateId = stateId;
                 }
-                val = dbc.GetParameter<SettingEntity>(s => s.Name == "不能退货时间", s => s.Parm);
+                val = dbc.GetParameter<SettingEntity>(s => s.Name == "不能退货时间", s => s.Param);
                 double.TryParse(val, out day);
                 if (day == 0)
                 {

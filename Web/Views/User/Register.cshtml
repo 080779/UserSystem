@@ -36,7 +36,7 @@
                     {
                         <div class="form-group ">
                             <div class="col-xs-12">
-                                <input class="form-control" id="recommend" maxlength="11" value="@Model" readonly type="text" placeholder="推荐人">
+                                <input class="form-control" id="recommend" maxlength="11" value="@Model" readonly type="text" placeholder="推荐人邀请码">
                             </div>
                         </div>
                     }
@@ -44,7 +44,7 @@
                     {
                         <div class="form-group ">
                             <div class="col-xs-12">
-                                <input class="form-control" id="recommend" maxlength="11" type="text" placeholder="推荐人">
+                                <input class="form-control" id="recommend" maxlength="11" type="text" placeholder="推荐人邀请码">
                             </div>
                         </div>
                     }
@@ -164,7 +164,7 @@
             var password1 = $("#password1").val();
             var code = $("#code").val();
             if (recommend == "") {
-                layer.msg("推荐人不能为空");
+                layer.msg("推荐人邀请码不能为空");
                 return;
             }
             if (mobile == "") {

@@ -9,20 +9,20 @@ namespace IMS.IService
     /// </summary>
     public interface ISettingService : IServiceSupport
     {
-        Task<long> AddAsync(string name, string parm, string description, int sort, long typeId);
-        Task<long> EditAsync(long id, string name, string parm, string description, int sort);
+        Task<long> AddAsync(string name, string param, string remark, int sort, int typeId);
+        Task<long> EditAsync(long id, string name, string param, string remark, int sort);
         Task<bool> FrozenAsync(long id);
         Task<bool> DelAsync(long id);
         Task<SettingDTO> GetModelByIdAsync(long id);
-        Task<SettingDTO[]> GetByTypeIdIsEnableAsync(long id);
-        Task<SettingDTO[]> GetByTypeIdAsync(long id);
-        Task<SettingSetDTO[]> GetAllIsEnableAsync();
+        Task<SettingDTO[]> GetByTypeIdIsEnableAsync(int id);
+        Task<SettingDTO[]> GetByTypeIdAsync(int id);
+        Task<SettingDTO[]> GetAllIsEnableAsync();
         Task<bool> UpdateAsync(long id, string parm);
         Task<bool> UpdateAsync(params SettingParm[] parms);
         Task<bool> UpdateByNameAsync(string name, string parm);
         Task<SettingDTO> GetModelByNameAsync(string name);
         Task<string> GetParmByNameAsync(string name);
-        Task<PHPSettingDTO[]> GetModelListAsync(string settingTypeName);
+        Task<SettingDTO[]> GetModelListAsync(string paramName, int? typeId);
     }
     public class SettingSearchResult
     {

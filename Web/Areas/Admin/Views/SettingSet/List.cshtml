@@ -35,22 +35,57 @@
     <script src="~/areas/admin/js/wangEditor.min.js"></script>
     <script src="~/areas/admin/js/jquery.uploadimg.js"></script>
     <title>参数列表</title>
+    <style>
+        .param_changeall {
+            margin:20px;
+        }
+        .param_list{
+            margin-bottom:5px;
+        }
+        .param_tilte {
+            display: inline-block;
+            width: 200px;
+            text-align: right;
+        }
+        .param_name {
+            display: inline-block;
+            width:220px;
+        }
+        .param_input{
+            display:inline-block;
+            width:400px;
+        }
+        .param_input input{
+            width:250px;
+        }
+        .param_change {
+            display: inline-block;
+        }
+        .param_change button{
+            width:70px;
+            height:28px;
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <div class="changeall"><a v-on:click="editall" class="btn btn-primary">修改全部</a></div>
-        <div class="changelists" v-for="settingSet in settingSets">            
-            <div class="changelist">
-                <div v-for="set in settingSet.settings">
-                    <div class="changelisttitle"><span v-if="set.sort==0" style="color:red;" v-html="settingSet.typeName+'>>'"></span></div>
-                    <span class="changetitle" v-html="set.name+'：'"></span><input type="text" v-model="set.parm" /><span class="changeremark" v-html="set.description"></span>
-                    <span><button v-on:click="edit(set.id,set.parm)" class="btn-success">修改</button></span>
-                </div>
+        <div class="param_changeall"><a v-on:click="editall" class="btn btn-success">修改全部</a></div>
+        <div class="param_list" v-for="setting in settings">
+            <div class="param_tilte">
+                <span v-if="setting.levelId==1" style="color:red;" v-html="setting.paramName+'>>'"></span>
             </div>
-            <hr />
+            <div class="param_name">
+                <span class="changetitle" v-html="setting.name+'：'"></span>
+            </div>
+            <div class="param_input">
+                <input type="text" v-model="setting.param" /><span class="changeremark" v-html="setting.remark"></span>
+            </div>
+            <div class="param_change">
+                <span><button v-on:click="edit(setting.id,setting.param)" class="btn-warning">修改</button></span>
+            </div>
         </div>
-        <div class="changeall"><a v-on:click="editall" class="btn btn-primary">修改全部</a></div>
+        <div class="param_changeall"><a v-on:click="editall" class="btn btn-success">修改全部</a></div>
     </div>
     <script type="text/javascript">
         var startTime;
@@ -59,7 +94,7 @@
         var vue = new Vue({
             el: "#app",
             data: {
-                settingSets: []
+                settings: []
             },
             methods: {
                 getpage: function () {
@@ -67,8 +102,8 @@
                         this.settings = result.data.data;
                     })
                 },
-                edit: function (id,parm) {
-                    this.$http.post('/admin/settingset/edit', { id:id,parm:parm }, { emulateJSON: true }).then(function (result) {
+                edit: function (id, param) {
+                    this.$http.post('/admin/settingset/edit', { id: id, parm: param }, { emulateJSON: true }).then(function (result) {
                         if (result.data.status == 1) {
                             layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                             this.getpage();
@@ -85,13 +120,11 @@
                     })
                 },
                 editall: function () {
-                    $.each(this.settingSets, function (k, val) {
-                        $.each(val.settings, function (key, value) {
-                            var setting = { id: 0, parm: '' };
-                            setting.id = value.id;
-                            setting.parm = value.parm;
-                            settings.push(setting);
-                        })
+                    $.each(this.settings, function (k, val) {
+                        var setting = { id: 0, parm: '' };
+                        setting.id = val.id;
+                        setting.parm = val.param;
+                        settings.push(setting);
                     })
                     this.$http.post('/admin/settingset/editall', { settings: settings }, { emulateJSON: true }).then(function (result) {
                         if (result.data.status == 1) {
@@ -111,9 +144,7 @@
                 }
             },
             mounted: function () {
-                this.$http.post('/admin/settingset/list', {}, { emulateJSON: true }).then(function (result) {
-                    this.settingSets = result.data.data;
-                })
+                this.getpage();
             }
         });
     </script>

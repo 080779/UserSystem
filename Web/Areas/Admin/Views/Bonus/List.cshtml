@@ -33,7 +33,7 @@
     <script src="~/assets/laydate/laydate.js" type="text/javascript"></script>
     @*<script src="~/assets/src/laydate.js"></script>*@
     <script src="~/areas/admin/js/wangEditor.min.js"></script>
-    <title>激活会员管理</title>
+    <title>培训课程管理</title>
 </head>
 
 <body>
@@ -41,7 +41,7 @@
         <!---->
         <div class="search_style">
             <ul class="search_content clearfix">
-                <li><label class="l_f">课程名</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="课程名" style=" width:150px" /></li>
+                <li><label class="l_f">记录信息</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="记录信息" style=" width:150px" /></li>
                 @*<li>
                         <label class="l_f">添加时间</label>
                         <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
@@ -57,25 +57,16 @@
                     <tr>
                         <th width="80">编号</th>
                         <th width="80">账号</th>
-                        <th width="80">购买课程名</th>
-                        <th width="80">购买课程价格</th>
-                        <th width="80">状态</th>
+                        <th width="200">记录</th>
                         <th width="100">时间</th>
-                        <th width="120">操作</th>
                     </tr>
                 </thead>
-                <tbody v-for="courseOrder in courseOrders">
+                <tbody v-for="item in list">
                     <tr>
-                        <td v-html="courseOrder.id"></td>
-                        <td v-html="courseOrder.buyerName"></td>
-                        <td v-html="courseOrder.courseName"></td>
-                        <td v-html="courseOrder.amount"></td>
-                        <td v-html="courseOrder.orderStateName"></td>
-                        <td v-html="courseOrder.createTime"></td>
-                        <td class="td-manage">
-                            <a title="取消" v-if="courseOrder.orderStateId==1" href="javascript:;" v-on:click="cancel(courseOrder.id)" class="btn btn-xs btn-warning">取消</a>
-                            <a title="确认" v-if="courseOrder.orderStateId==1" href="javascript:;" v-on:click="confirm(courseOrder.id)" class="btn btn-xs btn-warning">确认</a>
-                        </td>
+                        <td v-html="item.id"></td>
+                        <td v-html="item.userMobile"></td>
+                        <td v-html="item.source"></td>
+                        <td v-html="item.createTime"></td>
                     </tr>
                 </tbody>
             </table>
@@ -93,7 +84,7 @@
                 <li><a v-on:click="pages.cur=pages.all,getpage()">尾页</a></li>
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
-        </div>
+        </div>                
     </div>
 </body>
 </html>
@@ -101,7 +92,7 @@
     var vue = new Vue({
         el: "#app",
         data: {
-            courseOrders: [],
+            list: [],
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -131,9 +122,9 @@
                 });
             },
             getpage: function () {
-                this.$http.post('/admin/courseOrder/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.$http.post('/admin/bonus/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     if (result.data.status == 1) {
-                        this.courseOrders = result.data.data.courseOrders;
+                        this.list = result.data.data.list;
                         this.pages.all = result.data.data.pageCount;
                     }
                     else if (result.data.status == 0) {
@@ -165,47 +156,6 @@
             },
             search: function () {
                 this.getpage();
-            },
-            cancel: function (id, isenabled) {
-                var that = this;
-                layer.confirm("确认取消订单吗？", { icon: 0, title: '是否取消订单会员' }, function () {
-                    that.$http.post('/admin/courseOrder/audit', { id: id, stateId: -1 }, { emulateJSON: true }).then(function (result) {
-                        if (result.data.status == 1) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            that.getpage();
-                        }
-                        else if (result.data.status == 0) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            //that.msg = result.data.msg;
-                        }
-                        else if (result.data.status == 302) {
-                            window.location.href = result.data.data;
-                        }
-                        else if (result.data.status == 401) {
-                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                        }
-                    });
-                });
-            },
-            confirm: function (id) {
-                var that = this;
-                layer.confirm("确认完成订单吗？", { icon: 0, title: '是否完成订单' }, function (index) {
-                    that.$http.post('/admin/courseOrder/audit', { id: id, stateId: 2 }, { emulateJSON: true }).then(function (result) {
-                        if (result.data.status == 1) {
-                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                            that.getpage();
-                        }
-                        else if (result.data.status == 0) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        }
-                        else if (result.data.status == 302) {
-                            window.location.href = result.data.data;
-                        }
-                        else if (result.data.status == 401) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        }
-                    });
-                });
             }
         },
         computed: {
@@ -239,12 +189,12 @@
             this.getpage();
         }
     });
-    //laydate({
-    //    elem: '#start',
-    //    event: 'focus'
-    //});
-    //laydate({
-    //    elem: '#end',
-    //    event: 'focus'
-    //});
+    laydate({
+        elem: '#start',
+        event: 'focus'
+    });
+    laydate({
+        elem: '#end',
+        event: 'focus'
+    });
 </script>

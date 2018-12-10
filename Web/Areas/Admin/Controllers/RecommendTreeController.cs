@@ -1,8 +1,6 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
-using IMS.Web.App_Start.Filter;
-using IMS.Web.Models.RecommendTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace IMS.Web.Controllers
+namespace IMS.Web.Areas.Admin.Controllers
 {
     public class RecommendTreeController : Controller
     {
@@ -20,10 +18,9 @@ namespace IMS.Web.Controllers
 
         #region 直推图页面
         [HttpGet]
-        [PublicViewBag("直推图")]//SYSAuthorizationFilter中含有这个标记的action添加公共的viewbag到布局页中
         public ActionResult Info()
         {
-            return View(CookieHelper.GetLoginId());
+            return View(1);
         }
         #endregion
 
@@ -130,7 +127,7 @@ namespace IMS.Web.Controllers
             else
             {
                 res = 1;
-            }            
+            }
             return await Get(res, id);
         }
         #endregion
@@ -165,7 +162,7 @@ namespace IMS.Web.Controllers
         private bool Valid(string token)
         {
             string validToken = CommonHelper.GetMD5(DateTime.Now.ToString("yyyyMMdd") + KEY).ToLower();
-            if(token!=validToken)
+            if (token != validToken)
             {
                 return false;
             }
@@ -173,7 +170,7 @@ namespace IMS.Web.Controllers
         }
         #endregion
 
-        private string Treetext(string mobile,decimal amount, string levelName)
+        private string Treetext(string mobile, decimal amount, string levelName)
         {
             string treeText = "";
             treeText = "<span style='color:green;'>" + mobile + "</span>|<span style='color:green;'>" + levelName + "</span>|<span style='color:green;'>" + amount + "</span> ";

@@ -98,7 +98,6 @@ namespace IMS.Service
         public DbSet<UserAccountEntity> UserAccounts { get; set; }
         public DbSet<SettingTypeEntity> SettingTypes { get; set; }
         public DbSet<LinkEntity> Links { get; set; }
-        public DbSet<NewsEntity> News { get; set; }
         public DbSet<CourseOrderEntity> CourseOrders { get; set; }
     }
 }

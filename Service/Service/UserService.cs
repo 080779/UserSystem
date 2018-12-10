@@ -62,14 +62,13 @@ namespace IMS.Service.Service
             UserRecommendTreeDTO dto = new UserRecommendTreeDTO();
             dto.Id = entity.Id;
             dto.Mobile = entity.Mobile;
-            dto.TeamScore = entity.TeamScore;
-            dto.MLevelName = mLevelId.GetEnumName<MLevelEnum>();
+            dto.Amount = entity.Amount;
             dto.ShopUID = entity.ShopUID;
             dto.LevelName = entity.LevelId.GetEnumName<LevelEnum>();
             return dto;
         }
 
-        public async Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommendMobile, string nickName,string avatarUrl)
+        public async Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName,string avatarUrl)
         {
             string userCode = string.Empty;
 
@@ -83,13 +82,13 @@ namespace IMS.Service.Service
                 } while (userId != 0);
 
                 UserEntity recUser;
-                if (string.IsNullOrWhiteSpace(recommendMobile))
+                if (string.IsNullOrWhiteSpace(recommend))
                 {
                     recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.Id == 1);
                 }
                 else
                 {
-                    recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.Mobile == recommendMobile);
+                    recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.UserCode == recommend);
                 }   
                 
                 if (recUser == null)
@@ -753,6 +752,20 @@ namespace IMS.Service.Service
                 return mobile;
             }
         }
+
+        public async Task<string> GetUserCodeByIdAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                string mobile = await dbc.GetParameterAsync<UserEntity>(u => u.Id == id, u => u.UserCode);
+                if (mobile == null)
+                {
+                    return "";
+                }
+                return mobile;
+            }
+        }
+
         public async Task<long> GetIdByMobile(string mobile)
         {
             using (MyDbContext dbc = new MyDbContext())

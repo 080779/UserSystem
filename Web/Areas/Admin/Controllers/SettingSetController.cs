@@ -22,7 +22,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public async Task<ActionResult> List(bool flag = true)
         {
             var model = await settingService.GetAllIsEnableAsync();
-            return Json(new AjaxResult { Status = 1, Data = model.Where(p => p.Settings.Length > 0) });
+            return Json(new AjaxResult { Status = 1, Data = model });
         }
 
         [HttpPost]

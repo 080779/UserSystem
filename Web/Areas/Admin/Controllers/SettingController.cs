@@ -26,27 +26,15 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             SettingListViewModel model = new SettingListViewModel();
             var tilte= await settingService.GetModelByNameAsync("系统标题");
-            model.SysTitle = new SettingParm { Id = tilte.Id, Parm = tilte.Parm };
+            model.SysTitle = new SettingParm { Id = tilte.Id, Parm = tilte.Param };
             var phone1 = await settingService.GetModelByNameAsync("客服电话");
-            model.Phone1 = new SettingParm { Id = phone1.Id, Parm = phone1.Parm };
+            model.Phone1 = new SettingParm { Id = phone1.Id, Parm = phone1.Param };
             var phone2 = await settingService.GetModelByNameAsync("客服电话1");
-            model.Phone2 = new SettingParm { Id = phone2.Id, Parm = phone2.Parm };
+            model.Phone2 = new SettingParm { Id = phone2.Id, Parm = phone2.Param };
             var logo = await settingService.GetModelByNameAsync("系统LOGO");
-            model.Logo = new SettingParm { Id = logo.Id, Parm = logo.Parm };
+            model.Logo = new SettingParm { Id = logo.Id, Parm = logo.Param };
             var about = await settingService.GetModelByNameAsync("关于我们");
-            model.About = new SettingParm { Id = about.Id, Parm = about.Parm };
-            //var deduct= await settingService.GetModelByNameAsync("退货扣除比例");
-            //model.Deduct = new SettingParm { Id = deduct.Id, Parm = deduct.Parm };  
-            //var auto = await settingService.GetModelByNameAsync("自动确认收货时间");
-            //model.Auto = new SettingParm { Id = auto.Id, Parm = auto.Parm };
-            //var unReturn = await settingService.GetModelByNameAsync("不能退货时间");
-            //model.UnReturn = new SettingParm { Id = unReturn.Id, Parm = unReturn.Parm };
-            //var RecommendBonus1 = await settingService.GetModelByNameAsync("一级分销佣金");
-            //model.Recommend1 = new SettingParm { Id = RecommendBonus1.Id, Parm = RecommendBonus1.Parm };
-            //var RecommendBonus2 = await settingService.GetModelByNameAsync("二级分销佣金");
-            //model.Recommend2 = new SettingParm { Id = RecommendBonus2.Id, Parm = RecommendBonus2.Parm };
-            //var RecommendBonus3 = await settingService.GetModelByNameAsync("三级分销佣金");
-            //model.Recommend3 = new SettingParm { Id = RecommendBonus3.Id, Parm = RecommendBonus3.Parm };
+            model.About = new SettingParm { Id = about.Id, Parm = about.Param };
 
             return Json(new AjaxResult { Status = 1, Data = model });
         }

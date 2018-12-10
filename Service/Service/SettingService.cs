@@ -19,33 +19,18 @@ namespace IMS.Service.Service
             dto.CreateTime = entity.CreateTime;
             dto.Id = entity.Id;
             dto.Name = entity.Name;
-            dto.Description = entity.Description;
-            dto.TypeId = entity.SettingTypeId;
-            dto.Parm = entity.Parm;
+            dto.Remark = entity.Remark;
+            dto.ParamTypeId = entity.ParamTypeId;
+            dto.Param = entity.Param;
             dto.Sort = entity.Sort;
             dto.IsEnabled = entity.IsEnabled;
+            dto.Sort = entity.Sort;
+            dto.ParamName = entity.ParamName;
+            dto.LevelId = entity.LevelId;
             return dto;
         }
 
-        public PHPSettingDTO PToDTO(SettingEntity entity)
-        {
-            PHPSettingDTO dto = new PHPSettingDTO();
-            dto.Id = entity.Id;
-            dto.Description = entity.Description;
-            dto.Name = entity.Name;
-            dto.Parm = entity.Parm;
-            return dto;
-        }
-
-        private SettingSetDTO ToDTO(string typeName, SettingDTO[] settings)
-        {
-            SettingSetDTO dto = new SettingSetDTO();
-            dto.TypeName = typeName;
-            dto.Settings = settings;
-            return dto;
-        }
-
-        public async Task<long> AddAsync(string name, string parm, string description, int sort, long typeId)
+        public async Task<long> AddAsync(string name, string param, string remark, int sort, int typeId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -56,17 +41,17 @@ namespace IMS.Service.Service
                 }
                 SettingEntity entity = new SettingEntity();
                 entity.Name = name;
-                entity.Parm = parm;
+                entity.Param = param;
                 entity.Sort = sort;
-                entity.SettingTypeId = typeId;
-                entity.Description = description;
+                entity.ParamTypeId = typeId;
+                entity.Remark = remark;
                 dbc.Settings.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
         }
 
-        public async Task<long> EditAsync(long id, string name, string parm, string description, int sort)
+        public async Task<long> EditAsync(long id, string name, string param, string remark, int sort)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -76,9 +61,9 @@ namespace IMS.Service.Service
                     return -1;
                 }
                 entity.Name = name;
-                entity.Parm = parm;
+                entity.Param = param;
                 entity.Sort = sort;
-                entity.Description = description;
+                entity.Remark = remark;
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -127,21 +112,21 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<SettingDTO[]> GetByTypeIdIsEnableAsync(long id)
+        public async Task<SettingDTO[]> GetByTypeIdIsEnableAsync(int id)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<SettingEntity>().AsNoTracking().Where(p => p.SettingTypeId == id && p.IsEnabled == true);
+                var entities = dbc.GetAll<SettingEntity>().AsNoTracking().Where(p => p.ParamTypeId == id && p.IsEnabled == true);
                 var idNames = await entities.OrderBy(p => p.Sort).ToListAsync();
                 return idNames.Select(p => ToDTO(p)).ToArray();
             }
         }
 
-        public async Task<SettingDTO[]> GetByTypeIdAsync(long id)
+        public async Task<SettingDTO[]> GetByTypeIdAsync(int id)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<SettingEntity>().AsNoTracking().Where(p => p.SettingTypeId == id);
+                var entities = dbc.GetAll<SettingEntity>().AsNoTracking().Where(p => p.ParamTypeId == id);
                 var idNames = await entities.OrderBy(p => p.Sort).ToListAsync();
                 return idNames.Select(p => ToDTO(p)).ToArray();
             }
@@ -151,7 +136,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                SettingEntity entity = await dbc.GetAll<SettingEntity>().Include(s => s.SettingType).AsNoTracking().SingleOrDefaultAsync(g => g.Name == name);
+                SettingEntity entity = await dbc.GetAll<SettingEntity>().AsNoTracking().SingleOrDefaultAsync(g => g.Name == name);
                 if (entity == null)
                 {
                     return null;
@@ -164,7 +149,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                string parm = await dbc.GetParameterAsync<SettingEntity>(g => g.Name == name,g=>g.Parm);
+                string parm = await dbc.GetParameterAsync<SettingEntity>(g => g.Name == name,g=>g.Param);
                 if (parm == null)
                 {
                     return null;
@@ -173,14 +158,21 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<PHPSettingDTO[]> GetModelListAsync(string settingTypeName)
+        public async Task<SettingDTO[]> GetModelListAsync(string paramName,int? typeId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                long settingTypeId = await dbc.GetIdAsync<SettingTypeEntity>(i => i.Name == settingTypeName);
-                var entities = dbc.GetAll<SettingEntity>().Include(s => s.SettingType).AsNoTracking().Where(a=>a.SettingTypeId==settingTypeId && a.IsEnabled==true);
+                var entities = dbc.GetAll<SettingEntity>().AsNoTracking();
+                if(!string.IsNullOrEmpty(paramName))
+                {
+                    entities = entities.Where(s => s.ParamName == paramName);
+                }
+                if (typeId != null)
+                {
+                    entities = entities.Where(s => s.ParamTypeId == typeId);
+                }
                 var settingsResult = await entities.ToListAsync();
-                return settingsResult.Select(a => PToDTO(a)).ToArray();
+                return settingsResult.Select(a => ToDTO(a)).ToArray();
             }
         }
 
@@ -193,7 +185,7 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                entity.Parm = parm;
+                entity.Param = parm;
                 await dbc.SaveChangesAsync();
                 return true;
             }
@@ -210,7 +202,7 @@ namespace IMS.Service.Service
                     {
                         return false;
                     }
-                    entity.Parm = parm.Parm.ToString();
+                    entity.Param = parm.Parm.ToString();
                 }
                 await dbc.SaveChangesAsync();
                 return true;
@@ -226,19 +218,19 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                entity.Parm = parm;
+                entity.Param = parm;
                 await dbc.SaveChangesAsync();
                 return true;
             }
         }
 
-        public async Task<SettingSetDTO[]> GetAllIsEnableAsync()
+        public async Task<SettingDTO[]> GetAllIsEnableAsync()
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<SettingTypeEntity>().AsNoTracking().Where(p => p.IsEnabled == true);
-                var parameterSettings = await entities.OrderBy(p => p.Sort).ToListAsync();
-                return parameterSettings.Select(p => ToDTO(p.Name, dbc.GetAll<SettingEntity>().AsNoTracking().Where(pp => pp.SettingTypeId == p.Id && pp.IsEnabled==true).ToList().Select(pp => ToDTO(pp)).ToArray())).ToArray();
+                var entities = dbc.GetAll<SettingEntity>().AsNoTracking().Where(s=>s.IsEnabled==true);
+                var settingsResult = await entities.ToListAsync();
+                return settingsResult.Select(a => ToDTO(a)).ToArray();
             }
         }
     }

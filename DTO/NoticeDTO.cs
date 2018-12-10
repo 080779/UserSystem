@@ -11,6 +11,7 @@ namespace IMS.DTO
         public string Code { get; set; }
         public string Content { get; set; }
         public string Url { get; set; }
+        public string Creator { get; set; }
         public DateTime FailureTime { get; set; }
         public bool IsEnabled { get; set; }
     }

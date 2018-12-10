@@ -621,6 +621,8 @@
     <Content Include="css\fonts\themify.woff" />
     <Content Include="Areas\Admin\Views\Course\List.cshtml" />
     <Content Include="Areas\Admin\Views\CourseOrder\List.cshtml" />
+    <Content Include="Areas\Admin\Views\RecommendTree\Info.cshtml" />
+    <Content Include="Areas\Admin\Views\Bonus\List.cshtml" />
     <None Include="Properties\PublishProfiles\NN18101539.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -642,11 +644,13 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AccountController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\BonusController.cs" />
     <Compile Include="Areas\Admin\Controllers\CourseOrderController.cs" />
     <Compile Include="Areas\Admin\Controllers\CourseController.cs" />
     <Compile Include="Areas\Admin\Controllers\LinkController.cs" />
     <Compile Include="Areas\Admin\Controllers\NewsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ParameterController.cs" />
+    <Compile Include="Areas\Admin\Controllers\RecommendTreeController.cs" />
     <Compile Include="Areas\Admin\Controllers\RefundController.cs" />
     <Compile Include="Areas\Admin\Controllers\RegisterController.cs" />
     <Compile Include="Areas\Admin\Controllers\SettingController.cs" />
@@ -772,6 +776,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Course\Buy.cshtml" />
     <Content Include="Views\User\QrCode.cshtml" />
+    <Content Include="Views\User\Benefit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

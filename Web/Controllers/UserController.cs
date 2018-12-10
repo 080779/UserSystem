@@ -15,6 +15,7 @@ namespace IMS.Web.Controllers
     public class UserController : Controller
     {
         public IUserService userService { get; set; }
+        public ISettingService settingService { get; set; }
 
         #region 登录
         [HttpGet]
@@ -76,6 +77,7 @@ namespace IMS.Web.Controllers
         }
         #endregion
 
+        #region 登出
         public ActionResult Logout()
         {
             if (Request.Cookies["Platform_UserId"] != null)
@@ -86,6 +88,7 @@ namespace IMS.Web.Controllers
             }
             return Redirect("/user/login");
         }
+        #endregion
 
         #region 注册
         [HttpGet]
@@ -101,7 +104,7 @@ namespace IMS.Web.Controllers
         {
             if(string.IsNullOrEmpty(recommend))
             {
-                return Json(new AjaxResult { Status = 0, Msg = "推荐人账号不能为空" });
+                return Json(new AjaxResult { Status = 0, Msg = "推荐人邀请码不能为空" });
             }
             if (string.IsNullOrEmpty(mobile))
             {
@@ -146,9 +149,18 @@ namespace IMS.Web.Controllers
         [PublicViewBag("推荐二维码")]//SYSAuthorizationFilter中含有这个标记的action添加公共的viewbag到布局页中
         public async Task<ActionResult> QrCode()
         {
-            string mobile = await userService.GetMobileByIdAsync(CookieHelper.GetLoginId());
-            string url = "http://192.168.1.110:8081/user/register?recommend=" + mobile;
+            string userCode = await userService.GetUserCodeByIdAsync(CookieHelper.GetLoginId());
+            string url = "http://192.168.1.110:8081/user/register?recommend=" + userCode;
             return View((object)url);
+        }
+        #endregion
+
+        #region 会员权益
+        [PublicViewBag("会员权益")]//SYSAuthorizationFilter中含有这个标记的action添加公共的viewbag到布局页中
+        public async Task<ActionResult> Benefit()
+        {
+            var model = await settingService.GetModelListAsync("会员权益", null);
+            return View(model);
         }
         #endregion
     }

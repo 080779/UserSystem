@@ -8,13 +8,13 @@ namespace IMS.DTO
 {
     public class SettingDTO : BaseDTO
     {
+        public int? Sort { get; set; }
         public string ParamName { get; set; }
-        public long LevelId { get; set; }
-        public long TypeId { get; set; }
+        public int? LevelId { get; set; }
         public string Name { get; set; }
-        public string Parm { get; set; }
-        public string Description { get; set; }
-        public int Sort { get; set; }
+        public string Param { get; set; }
+        public string Remark { get; set; }
+        public int? ParamTypeId { get; set; }
         public bool IsEnabled { get; set; }
     }
 
@@ -22,7 +22,7 @@ namespace IMS.DTO
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string Parm { get; set; }
-        public string Description { get; set; }
+        public string Param { get; set; }
+        public string Remark { get; set; }
     }
 }

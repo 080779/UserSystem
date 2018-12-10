@@ -13,7 +13,7 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
-        Task<long> AddAsync(string mobile,  int levelTypeId, string password, string tradePassword, string recommendMobile, string nickName, string avatarUrl);
+        Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
         /// <summary>
         /// 修改头像，昵称
@@ -71,6 +71,7 @@ namespace IMS.IService
         Task<long> GetUserRecommendIdAysnc(long userId);
         Task<UserRecommendTreeDTO> GetModelTreeAsync(long id);
         Task<string> GetMobileByIdAsync(long id);
+        Task<string> GetUserCodeByIdAsync(long id);
         /// <summary>
         /// 根据用户账号获得用户模型
         /// </summary>
