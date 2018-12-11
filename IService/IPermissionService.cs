@@ -10,6 +10,6 @@ namespace IMS.IService
     public interface IPermissionService:IServiceSupport
     {
         Task<PermissionDTO[]> GetByTypeIdAsync(long id);
-        PermissionDTO GetByDesc(string description);
+        string GetNameByDesc(string description);
     }
 }

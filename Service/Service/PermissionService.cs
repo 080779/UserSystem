@@ -22,7 +22,6 @@ namespace IMS.Service.Service
             dto.PermissionTypeName = entity.PermissionType.Name;
             dto.CreateTime = entity.CreateTime;
             dto.Id = entity.Id;
-            dto.Remark = entity.Remark;
             return dto;
         }
         public async Task<PermissionDTO[]> GetByTypeIdAsync(long id)
@@ -35,12 +34,11 @@ namespace IMS.Service.Service
             }
         }
 
-        public PermissionDTO GetByDesc(string description)
+        public string GetNameByDesc(string description)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = dbc.GetAll<PermissionEntity>().Include(p => p.PermissionType).AsNoTracking().SingleOrDefault(p => p.Description == description);
-                return ToDTO(entity);
+                return dbc.GetParameter<PermissionEntity>(p => p.Description == description, p => p.Name);
             }
         }        
     }

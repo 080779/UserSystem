@@ -12,7 +12,6 @@ namespace IMS.Service.Config
             HasRequired(p => p.PermissionType).WithMany().HasForeignKey(p=>p.PermissionTypeId).WillCascadeOnDelete(false);
             Property(p => p.Name).HasMaxLength(50).IsRequired();
             Property(p => p.Description).HasMaxLength(100);
-            Property(p => p.Remark).HasMaxLength(50);
         }
     }
 }
