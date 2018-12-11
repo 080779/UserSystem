@@ -41,8 +41,8 @@
     <div id="app">
         <div class="clearfix" style="margin-top:20px">
             <span class="l_f">
-                <input type="file" style="display:inline-block;width:320px;height:28px;border:1px solid gray;"  id="excelFile" />
-                <a v-on:click="importExcel" class="btn btn-success"><i class="icon-plus"></i>导入用户</a>
+                @*<input type="file" style="display:inline-block;width:320px;height:28px;border:1px solid gray;"  id="excelFile" />
+                <a v-on:click="importExcel" class="btn btn-success"><i class="icon-plus"></i>导入用户</a>*@
             </span>
         </div>
         <div class="search_style">
@@ -226,37 +226,37 @@
                 }
                 this.getpage();
             },
-            importExcel: function () {
-                var excelFile = $("#excelFile").val();
-                if (excelFile == "") {
-                    layer.alert("请选择excel文件", { icon: 0, title: '提示框' });
-                    return;
-                }
-                console.log(excelFile);
-                if (excelFile.indexOf('xls') < 0 && excelFile.indexOf('xlsx') < 0) {
-                    layer.alert("请选择excel文件", { icon: 0, title: '提示框' });
-                    return;
-                }
+            //importExcel: function () {
+            //    var excelFile = $("#excelFile").val();
+            //    if (excelFile == "") {
+            //        layer.alert("请选择excel文件", { icon: 0, title: '提示框' });
+            //        return;
+            //    }
+            //    console.log(excelFile);
+            //    if (excelFile.indexOf('xls') < 0 && excelFile.indexOf('xlsx') < 0) {
+            //        layer.alert("请选择excel文件", { icon: 0, title: '提示框' });
+            //        return;
+            //    }
 
-                var formData = new FormData();
-                formData.append("excelFile", $("#excelFile")[0].files[0]);
-                this.$http.post('/admin/user/import', formData, { emulateJSON: true }).then(function (result) {
-                    if (result.data.status == 1) {
-                        layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                        layer.close(index);
-                        that.getpage();
-                    }
-                    else if (result.data.status == 0) {
-                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                    }
-                    else if (result.data.status == 302) {
-                        window.location.href = result.data.data;
-                    }
-                    else if (result.data.status == 401) {
-                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                    }
-                })
-            },
+            //    var formData = new FormData();
+            //    formData.append("excelFile", $("#excelFile")[0].files[0]);
+            //    this.$http.post('/admin/user/import', formData, { emulateJSON: true }).then(function (result) {
+            //        if (result.data.status == 1) {
+            //            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+            //            layer.close(index);
+            //            that.getpage();
+            //        }
+            //        else if (result.data.status == 0) {
+            //            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+            //        }
+            //        else if (result.data.status == 302) {
+            //            window.location.href = result.data.data;
+            //        }
+            //        else if (result.data.status == 401) {
+            //            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+            //        }
+            //    })
+            //},
             add: function () {
                 var that = this;
                 layer.open({

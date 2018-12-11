@@ -17,13 +17,13 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         #region 奖金列表
         [HttpGet]
+        //[Permission("积分奖励_积分奖励记录")]
         public ActionResult List()
         {
             return View();
         }
         [HttpPost]
         [AdminLog("积分奖励", "查看积分奖励记录")]
-        [Permission("积分奖励_积分奖励记录")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var res = await bonusService.GetModelListAsync(null,keyword,startTime,endTime,pageIndex,pageSize);

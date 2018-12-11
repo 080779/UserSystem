@@ -46,7 +46,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                long permissionTypeId = dbc.GetId<PermissionTypeEntity>(p => p.Remark == permissionType);
+                long permissionTypeId = dbc.GetId<PermissionTypeEntity>(p => p.Name == permissionType);
                 if(permissionTypeId<=0)
                 {
                     return -1;

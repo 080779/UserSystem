@@ -169,7 +169,7 @@ namespace IMS.Service.Service
                     long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u=>u.RecommendId==recUser.Id && u.LevelId== (int)LevelEnum.创客会员);
                     if(recCount >= 10)
                     {
-                        recUser.LevelId = (int)LevelEnum.节点会员;
+                        recUser.LevelId = (int)LevelEnum.贵宾会员;
                         count ++;
                     }
 
@@ -178,7 +178,7 @@ namespace IMS.Service.Service
                     {
                         recUser= await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == recommendId);
                         recCount = await dbc.GetAll<UserEntity>().AsNoTracking()
-                            .LongCountAsync(u => u.RecommendId == recUser.Id && (u.LevelId == (int)LevelEnum.节点会员 || u.LevelId==(int)LevelEnum.超级节点会员));
+                            .LongCountAsync(u => u.RecommendId == recUser.Id && (u.LevelId == (int)LevelEnum.贵宾会员 || u.LevelId==(int)LevelEnum.超级会员));
                         recommendId = recUser.RecommendId;
 
                         if(recCount < 6)
@@ -218,9 +218,9 @@ namespace IMS.Service.Service
                             blance = blance * 80 / 100;
                             recUser.Amount = recUser.Amount + blance;
                             count++;
-                            if (count >= 10 && recUser.LevelId == (int)LevelEnum.节点会员)
+                            if (count >= 10 && recUser.LevelId == (int)LevelEnum.贵宾会员)
                             {
-                                recUser.LevelId = (int)LevelEnum.超级节点会员;
+                                recUser.LevelId = (int)LevelEnum.超级会员;
                             }
 
                             BonusEntity entity3 = new BonusEntity();

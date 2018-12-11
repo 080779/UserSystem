@@ -38,8 +38,8 @@ namespace IMS.Web.Areas.Admin.Controllers
         #endregion
 
         #region 激活会员
-        //[AdminLog("会员管理", "删除用户")]
-        //[Permission("会员管理_删除用户")]
+        [AdminLog("会员管理", "激活会员")]
+        [Permission("会员管理_激活会员")]
         public async Task<ActionResult> Set(long id)
         {
             bool res = await userService.ActivateAsync(id);
@@ -50,8 +50,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "激活会员成功" });
         }
 
-        //[AdminLog("会员管理", "删除用户")]
-        //[Permission("会员管理_删除用户")]
+        [AdminLog("会员管理", "激活会员")]
+        [Permission("会员管理_激活会员")]
         public async Task<ActionResult> SetAll(long[] ids)
         {
             if(ids.Count()<=0)

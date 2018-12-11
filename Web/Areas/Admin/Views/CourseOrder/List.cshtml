@@ -73,8 +73,9 @@
                         <td v-html="courseOrder.orderStateName"></td>
                         <td v-html="courseOrder.createTime"></td>
                         <td class="td-manage">
-                            <a title="取消" v-if="courseOrder.orderStateId==1" href="javascript:;" v-on:click="cancel(courseOrder.id)" class="btn btn-xs btn-warning">取消</a>
-                            <a title="确认" v-if="courseOrder.orderStateId==1" href="javascript:;" v-on:click="confirm(courseOrder.id)" class="btn btn-xs btn-warning">确认</a>
+                            <a title="查看" v-bind:href="courseOrder.imgUrl" class="btn btn-xs btn-warning">查看</a>
+                            <a title="取消" v-if="courseOrder.orderStateId==1" v-on:click="cancel(courseOrder.id)" class="btn btn-xs btn-warning">取消</a>
+                            <a title="确认" v-if="courseOrder.orderStateId==1" v-on:click="confirm(courseOrder.id)" class="btn btn-xs btn-warning">确认</a>
                         </td>
                     </tr>
                 </tbody>
