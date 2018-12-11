@@ -29,10 +29,14 @@ namespace IMS.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> Login(string mobile,string password,string code)
-        {
+        {            
             if (string.IsNullOrEmpty(mobile))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "账号不能为空" });
+            }
+            if (!Regex.IsMatch(mobile, @"^1\d{10}$"))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "账号手机号格式不正确" });
             }
             if (string.IsNullOrEmpty(password))
             {
@@ -111,10 +115,10 @@ namespace IMS.Web.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "账号不能为空" });
             }
-            //if (!Regex.IsMatch(mobile, @"^1\d{10}$"))
-            //{
-            //    return Json(new AjaxResult { Status = 0, Msg = "用户手机号格式不正确" });
-            //}
+            if (!Regex.IsMatch(mobile, @"^1\d{10}$"))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "账号手机号格式不正确" });
+            }
             if (string.IsNullOrEmpty(password))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "密码不能为空" });

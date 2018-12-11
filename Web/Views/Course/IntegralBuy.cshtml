@@ -1,0 +1,77 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="container">
+        <div class="row m-b-20">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div class="grid-title">
+                        <h4>购买培训课程</h4>
+                    </div>
+                    <div class="row" id="app">
+                        <div class="form-horizontal col-sm-12">                            
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">选择课程：</label>
+                                <div class="col-md-9">
+                                    <ul style="list-style:none;padding-left:2px;" v-for="link in links">
+                                        <li><input type="radio" v-bind:id='link.id' v-bind:value="link.id" name="course" /> <label v-bind:for='link.id'><span v-html="link.name"></span> 课程价格：<span style="color:red" v-html="link.link002"></span>碳积分</label></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label"></label>
+                                <div class="col-md-9">
+                                    <button class="btn btn-custom" v-on:click="commit">提 交</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/areas/admin/js/jquery.uploadimg.js"></script>
+<script>
+
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            links: []
+        },
+        methods: {
+            getpage: function () {
+                this.$http.post('/course/list', {}, { emulateJSON: true }).then(function (result) {
+                    this.links = result.data.data;
+                })
+            },
+            selectImage: function () {
+                $("#getImgFile").click();
+            },
+            commit: function () {
+                var that = this;
+                var id = $('input[name="course"]:checked').val();
+                if (id == undefined) {
+                    layer.msg("请选择课程");
+                    return;
+                }
+                layer.confirm("确定要购买课程吗？", { icon: 0, title: '是否购买课程' }, function (index) {
+                    that.$http.post('/course/integralbuy', { id: id }, { emulateJSON: true }).then(function (result) {
+                        if (result.data.status == 1) {
+                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                        }
+                        else if (result.data.status == 0) {
+                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                        }
+                    });
+                });
+            }
+        },
+        mounted: function () {
+            this.getpage();
+        }
+    });
+</script>

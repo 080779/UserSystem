@@ -169,6 +169,20 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         #endregion
 
+        #region 赠送积分
+        [AdminLog("会员管理", "赠送积分")]
+        [Permission("会员管理_赠送积分")]
+        public async Task<ActionResult> Giving(long id,int integral)
+        {
+            bool res = await userService.AddAntegralAsync(id,integral);
+            if (!res)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "赠送积分失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "赠送积分成功" });
+        }
+        #endregion
+
         #region 导入用户
         //[AdminLog("会员管理", "删除用户")]
         //[Permission("会员管理_删除用户")]

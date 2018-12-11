@@ -142,6 +142,11 @@
             var mobile = $("#mobile").val();
             var password = $("#password").val();
             var code = $("#code").val();
+            var reg = /^1\d{10}$/;
+            if (!reg.test(mobile)) {
+                layer.alert('会员账号手机号码格式不正确', { icon: 0, tilte: '提示框' });
+                return;
+            }
             $.ajax({
                 url: "/user/login",
                 type: "post",

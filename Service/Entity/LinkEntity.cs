@@ -18,6 +18,7 @@ namespace IMS.Service.Entity
         public long TypeId { get; set; } = 1;
         public string TypeName { get; set; }
         public decimal Link001 { get; set; } = 0;
+        public decimal link002 { get; set; } = 0;
         public int Sort { get; set; } = 1;
         public bool IsEnabled { get; set; } = true;
     }

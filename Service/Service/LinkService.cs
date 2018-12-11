@@ -26,6 +26,7 @@ namespace IMS.Service.Service
             dto.Sort = entity.Sort;
             dto.IsEnabled = entity.IsEnabled;
             dto.Link001 = entity.Link001;
+            dto.link002 = entity.link002;
             dto.TypeName = entity.TypeName;
             return dto;
         }
@@ -46,7 +47,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> AddAsync(long typeId, string typeName, string name, string imgUrl, string url, decimal amount)
+        public async Task<long> AddAsync(long typeId, string typeName, string name, string imgUrl, string url, decimal amount, int integral)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -57,6 +58,7 @@ namespace IMS.Service.Service
                 entity.TypeId = typeId;
                 entity.TypeName = typeName;
                 entity.Link001 = amount;
+                entity.link002 = integral;
                 dbc.Links.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
@@ -81,7 +83,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> EditAsync(long id, string name, string imgUrl, string url, decimal amount)
+        public async Task<long> EditAsync(long id, string name, decimal amount, int integral)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -91,9 +93,8 @@ namespace IMS.Service.Service
                     return -1;
                 }
                 entity.Name = name;
-                entity.ImgUrl = imgUrl;
-                entity.Url = url;
                 entity.Link001 = amount;
+                entity.link002 = integral;
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }

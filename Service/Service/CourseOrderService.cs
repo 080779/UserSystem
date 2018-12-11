@@ -48,10 +48,58 @@ namespace IMS.Service.Service
                 entity.BuyerId = buyerId;
                 entity.BuyerName = buyerName;
                 entity.CourseId = courseId;
+                entity.PayTypeId = 1;
                 entity.CourseName = await dbc.GetParameterAsync<LinkEntity>(l=>l.Id==courseId,l=>l.Name);
                 entity.Amount = await dbc.GetDecimalParameterAsync<LinkEntity>(l => l.Id == courseId, l => l.Link001);
                 entity.ImgUrl = imgUrl;
                 dbc.CourseOrders.Add(entity);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
+        }
+
+        public async Task<long> AddAsync(long buyerId, string buyerName, long courseId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                int res = await dbc.GetAll<CourseOrderEntity>().Where(c => c.CourseId == courseId && c.BuyerId == buyerId && c.OrderStateId != (int)CourseOrderStateEnum.已取消 && c.PayTypeId==2).Select(c => c.OrderStateId).SingleOrDefaultAsync();
+                //订单已经存在且状态不是已取消
+                if (res > 0)
+                {
+                    return -1;
+                }
+                decimal amount= await dbc.GetAll<LinkEntity>().Where(l => l.Id == courseId).Select(l => l.link002).SingleOrDefaultAsync();
+                var user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == buyerId);
+                if(user.Amount<amount)
+                {
+                    return -2;
+                }
+                user.Amount = user.Amount - amount;
+
+                
+                CourseOrderEntity entity = new CourseOrderEntity();
+                entity.Code = CommonHelper.GetRandom3();
+                entity.BuyerId = buyerId;
+                entity.BuyerName = buyerName;
+                entity.CourseId = courseId;
+                entity.PayTypeId = 2;
+                entity.OrderStateId = 2;
+                entity.CourseName = await dbc.GetParameterAsync<LinkEntity>(l => l.Id == courseId, l => l.Name);
+                entity.Amount = amount;
+                entity.ImgUrl = "";
+                dbc.CourseOrders.Add(entity);
+                await dbc.SaveChangesAsync();
+
+                JournalEntity journal = new JournalEntity();
+                journal.UserId = user.Id;
+                journal.BalanceAmount = user.Amount;
+                journal.OutAmount = amount;
+                journal.Remark = "用户(" + user.Mobile + ")用碳积分购买课程";
+                journal.JournalTypeId = (int)JournalTypeEnum.购买课程;
+                journal.OrderCode = entity.Code;
+                journal.GoodsId = entity.CourseId;//来至订单ID
+                journal.CurrencyType = (int)CurrencyEnums.碳积分;
+                dbc.Journals.Add(journal);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }

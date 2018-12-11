@@ -15,6 +15,7 @@ namespace IMS.DTO
         public long TypeId { get; set; }
         public string TypeName { get; set; }
         public decimal Link001 { get; set; }
+        public decimal link002 { get; set; }
         public int Sort { get; set; }
         public bool IsEnabled { get; set; }
     }

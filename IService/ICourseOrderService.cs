@@ -10,6 +10,7 @@ namespace IMS.IService
     public interface ICourseOrderService : IServiceSupport
     {
         Task<long> AddAsync(long buyerId, string buyerName,long courseId,string imgUrl);
+        Task<long> AddAsync(long buyerId, string buyerName, long courseId);
         Task<bool> AuditAsync(long id,int stateId, long auditorId);
         Task<CourseOrderSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }

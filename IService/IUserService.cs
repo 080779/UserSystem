@@ -17,6 +17,7 @@ namespace IMS.IService
         Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<long> AddByExcelAsync(string mobile, string trueName, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
+        Task<bool> AddAntegralAsync(long id,int integral);
         /// <summary>
         /// 修改头像，昵称
         /// </summary>

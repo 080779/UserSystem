@@ -230,6 +230,21 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<bool> AddAntegralAsync(long id, int integral)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                if (user == null)
+                {
+                    return false;
+                }
+                user.Amount = user.Amount + integral;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<bool> UpdateInfoAsync(long id, string nickName, string headpic)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -310,6 +325,18 @@ namespace IMS.Service.Service
                 }
                 //激活会员
                 entity.IsUpgraded = true;
+                entity.Amount = entity.Amount + 100;
+
+                JournalEntity journal = new JournalEntity();
+                journal.UserId = entity.Id;
+                journal.BalanceAmount = entity.Amount;
+                journal.InAmount = 100;
+                journal.Remark = "用户(" + entity.Mobile + ")激活成功，赠送碳积分";
+                journal.JournalTypeId = (int)JournalTypeEnum.会员激活;
+                journal.OrderCode = "";
+                journal.GoodsId = 0;//来至订单ID
+                journal.CurrencyType = (int)CurrencyEnums.碳积分;
+                dbc.Journals.Add(journal);
                 await dbc.SaveChangesAsync();
                 return true;
             }

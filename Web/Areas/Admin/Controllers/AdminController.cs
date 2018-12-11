@@ -25,7 +25,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("管理员管理_管理员管理")]
-        [AdminLog("admin", "list")]
+        [AdminLog("管理员管理", "查看管理员管理列表")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             AdminSearchResult result= await adminService.GetModelListAsync("admin", keyword, startTime, endTime, pageIndex, pageSize);          
@@ -45,9 +45,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = result.PageCount;
             return Json(new AjaxResult { Status = 1, Data = model });
         }
-        //[Permission("管理员管理_管理员管理")]
-        [Permission("admin.add")]
-        [AdminLog("admin", "add")]
+        [Permission("管理员管理_添加管理员")]
+        [AdminLog("管理员管理", "添加管理员")]
         public async Task<ActionResult> Add(string mobile,string password)
         {
             string adminMobile = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Mobile;
@@ -70,9 +69,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1,Msg= "添加管理员成功", Data = "/admin/admin/list" });
         }
-        //[Permission("管理员管理_管理员管理")]
-        [Permission("admin.permSet")]
-        [AdminLog("admin", "permSet")]
+        [Permission("管理员管理_修改权限")]
+        [AdminLog("管理员管理", "修改权限")]
         public async Task<ActionResult> EditPermission(long id, List<long> permissionIds)
         {
             if (permissionIds==null)
@@ -86,9 +84,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "编辑管理员权限成功", Data = "/admin/admin/list" });
         }
-        //[Permission("管理员管理_管理员管理")]
-        [Permission("admin.pwdSet")]
-        [AdminLog("admin", "pwdSet")]
+        [Permission("管理员管理_修改密码")]
+        [AdminLog("管理员管理", "修改密码")]
         public async Task<ActionResult> EditPassword(long id, string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -127,9 +124,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Data = permissionTypes });
         }
-        //[Permission("管理员管理_管理员管理")]
-        [Permission("admin.frozen")]
-        [AdminLog("admin", "frozen")]
+        [Permission("管理员管理_冻结管理")]
+        [AdminLog("管理员管理", "冻结管理")]
         public async Task<ActionResult> Frozen(long id)
         {
             bool res= await adminService.FrozenAsync(id);
@@ -139,9 +135,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "冻结、解冻管理员账号操作成功" });
         }
-        //[Permission("管理员管理_管理员管理")]
-        [Permission("admin.del")]
-        [AdminLog("admin", "del")]
+        [Permission("管理员管理_删除用户")]
+        [AdminLog("管理员管理", "删除用户")]
         public async Task<ActionResult> Del(long id)
         {
             bool res = await adminService.DeleteAsync(id);

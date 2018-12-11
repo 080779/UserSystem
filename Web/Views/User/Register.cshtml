@@ -171,6 +171,11 @@
                 layer.msg("账号不能为空");
                 return;
             }
+            var reg = /^1\d{10}$/;
+            if (!reg.test(mobile)) {
+                layer.alert('会员账号手机号码格式不正确', { icon: 0, tilte: '提示框' });
+                return;
+            }
             if (password == "") {
                 layer.msg("密码不能为空");
                 return;
