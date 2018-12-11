@@ -69,7 +69,7 @@ namespace IMS.Web.App_Start.Filter
                     {
                         if (filterContext.HttpContext.Request.IsAjaxRequest())
                         {
-                            filterContext.Result = new JsonNetResult { Data = new AjaxResult { Status = 1, Msg = "没有" + permissionService.GetByDesc(attribute.Permission).Name + "这个权限" } };
+                            filterContext.Result = new JsonNetResult { Data = new AjaxResult { Status = 0, Msg = "没有" + permissionService.GetByDesc(attribute.Permission).Name + "这个权限" } };
                         }
                         else
                         {

@@ -1,5 +1,6 @@
 ﻿using IMS.Common;
 using IMS.IService;
+using IMS.Web.App_Start.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("打款管理", "查看打款管理列表")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var res = await courseOrderService.GetModelListAsync(keyword,startTime,endTime,pageIndex,pageSize);
@@ -28,8 +30,10 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         #endregion
 
-        #region 审核激活会员
+        #region 确认打款
         [HttpPost]
+        [AdminLog("打款管理", "确认打款")]
+        [Permission("打款管理_确认打款")]
         public async Task<ActionResult> Audit(long id,int stateId)
         {
             bool res = await courseOrderService.AuditAsync(id,stateId, Convert.ToInt64(Session["Platform_AdminUserId"]));

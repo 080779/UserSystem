@@ -9,7 +9,7 @@ namespace IMS.Web.App_Start.Filter
     {
         public string AdminLog { get; set; }
         public string PermissionType { get; set; }
-        public AdminLogAttribute(string PermissionType,string AdminLog)
+        public AdminLogAttribute(string PermissionType, string AdminLog)
         {
             this.AdminLog = AdminLog;
             this.PermissionType = PermissionType;

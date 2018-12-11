@@ -18,7 +18,7 @@ namespace IMS.Service.Entity
         public string Tip { get; set; }
         public long PermissionTypeId { get; set; }
         public long AdminId { get; set; }
-        public virtual PermissionTypeEntity PermissionType { get; set; }
-        public virtual AdminEntity Admin { get; set; }
+        public string PermissionTypeName { get; set; }
+        public string AdminMobile { get; set; }
     }
 }

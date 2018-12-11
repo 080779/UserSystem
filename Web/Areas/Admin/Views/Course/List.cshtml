@@ -75,7 +75,6 @@
                         <td v-html="link.createTime"></td>
                         <td class="td-manage">
                             <a v-on:click="edit(link.id)" href="javascript:;" title="编辑课程" class="btn btn-xs btn-success">编辑课程</a>
-                            <a title="冻结" href="javascript:;" v-on:click="frozen(link.id)" class="btn btn-xs btn-warning" v-html="link.isEnabled?'冻结课程':'解冻课程'"></a>
                             <a title="删除" href="javascript:;" v-on:click="del(link.id)" class="btn btn-xs btn-warning">删除课程</a>
                         </td>
                     </tr>
@@ -236,33 +235,6 @@
                             }
                         });
                     }
-                });
-            },
-            frozen: function (id, isenabled) {
-                var that = this;
-                var msg = '确认冻结课程吗？';
-                var msg1 = '是否冻结课程';
-                if (!isenabled) {
-                    msg = '确认解冻课程吗？';
-                    msg1 = '是否解冻课程';
-                }
-                layer.confirm(msg, { icon: 0, title: msg1 }, function () {
-                    that.$http.post('/admin/link/frozen', { id: id }, { emulateJSON: true }).then(function (result) {
-                        if (result.data.status == 1) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            that.getpage();
-                        }
-                        else if (result.data.status == 0) {
-                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            //that.msg = result.data.msg;
-                        }
-                        else if (result.data.status == 302) {
-                            window.location.href = result.data.data;
-                        }
-                        else if (result.data.status == 401) {
-                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                        }
-                    });
                 });
             },
             del: function (id) {

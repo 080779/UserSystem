@@ -142,62 +142,76 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> AddByExcelAsync(DataTable dt)
+        public async Task<long> AddByExcelAsync(string mobile,string trueName, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl)
         {
+            string userCode = string.Empty;
+
             using (MyDbContext dbc = new MyDbContext())
             {
-                string userCode = string.Empty;
                 long userId = 0;
-                foreach (DataRow row in dt.Rows)
+                do
                 {
-                    do
-                    {
-                        userCode = CommonHelper.GetNumberCaptcha(6);
-                        userId = await dbc.GetIdAsync<UserEntity>(u => u.Code == userCode);
-                    } while (userId != 0);
+                    userCode = CommonHelper.GetNumberCaptcha(6);
+                    userId = await dbc.GetIdAsync<UserEntity>(u => u.Code == userCode);
+                } while (userId != 0);
 
-                    UserEntity recUser;
-                    if (string.IsNullOrWhiteSpace(row["推荐人"].ToString()))
-                    {
-                        recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.Id == 1);
-                    }
-                    else
-                    {
-                        recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.TrueName == row["推荐人"].ToString());
-                    }
-
-                    try
-                    {
-                        UserEntity user = new UserEntity();
-                        user.UserCode = userCode;
-                        user.LevelId = 1;
-                        user.Mobile = row["电话"].ToString();
-                        user.Salt = CommonHelper.GetCaptcha(4);
-                        user.Password = CommonHelper.GetMD5("123456" + user.Salt);
-                        //user.TradePassword = "";// tradePassword;// CommonHelper.GetMD5(tradePassword + user.Salt);
-                        user.NickName = "无昵称";
-                        user.HeadPic = "/images/headpic.png";
-
-                        user.RecommendId = recUser.Id;
-                        user.RecommendGenera = recUser.RecommendGenera + 1;
-                        user.RecommendPath = recUser.RecommendPath;
-                        user.RecommendCode = recUser.Mobile;
-
-                        dbc.Users.Add(user);
-                        await dbc.SaveChangesAsync();
-
-                        var userModel = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(s => s.Id == user.Id);
-                        user.RecommendPath = user.RecommendPath + "-" + user.Id;
-                        await dbc.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        //  scope.Rollback();
-                        log.ErrorFormat("AddAsync:{0}", ex.ToString());
-                        return -3;
-                    }
+                UserEntity recUser;
+                if (string.IsNullOrWhiteSpace(recommend))
+                {
+                    recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.Id == 1);
                 }
-                return 1;
+                else
+                {
+                    recUser = await dbc.GetAll<UserEntity>().AsNoTracking().SingleOrDefaultAsync(u => u.TrueName == recommend);
+                }
+
+                if (recUser == null)
+                {
+                    return -1;
+                }
+
+                //if (!recUser.IsUpgraded)
+                //{
+                //    return -4;
+                //}
+
+                if ((await dbc.GetIdAsync<UserEntity>(u => u.Mobile == mobile)) > 0)
+                {
+                    return -2;
+                }
+
+                try
+                {
+                    UserEntity user = new UserEntity();
+                    user.UserCode = userCode;
+                    user.LevelId = levelTypeId;
+                    user.Mobile = mobile;
+                    user.Salt = CommonHelper.GetCaptcha(4);
+                    user.Password = CommonHelper.GetMD5(password + user.Salt);
+                    //user.TradePassword = "";// tradePassword;// CommonHelper.GetMD5(tradePassword + user.Salt);
+                    user.NickName = string.IsNullOrEmpty(nickName) ? "无昵称" : nickName;
+                    user.HeadPic = string.IsNullOrEmpty(avatarUrl) ? "/images/headpic.png" : avatarUrl;
+                    user.TrueName = trueName;
+
+                    user.RecommendId = recUser.Id;
+                    user.RecommendGenera = recUser.RecommendGenera + 1;
+                    user.RecommendPath = recUser.RecommendPath;
+                    user.RecommendCode = recUser.Mobile;
+
+                    dbc.Users.Add(user);
+                    await dbc.SaveChangesAsync();
+
+                    var userModel = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(s => s.Id == user.Id);
+                    user.RecommendPath = user.RecommendPath + "-" + user.Id;
+                    await dbc.SaveChangesAsync();
+                    return user.Id;
+                }
+                catch (Exception ex)
+                {
+                    //  scope.Rollback();
+                    log.ErrorFormat("AddAsync:{0}", ex.ToString());
+                    return -3;
+                }
             }
         }
 

@@ -180,11 +180,20 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = res.Value });
             }
             var dt = ExcelHelper.GetDataTable(res.Value);
-            var result = await userService.AddByExcelAsync(dt);
-            if(result<=0)
+            long result;
+            foreach (DataRow row in dt.Rows)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "导入失败" });
+                result = await userService.AddByExcelAsync(row["电话"].ToString(), row["姓名"].ToString(), 1,"123456",null,row["推荐人"].ToString(),null,null);
+                if(result==-2)
+                {
+                    continue;
+                }
+                if (result <= 0)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "导入失败" });
+                }
             }
+            
             return Json(new AjaxResult { Status = 1, Msg = "导入成功" });
         }
         #endregion

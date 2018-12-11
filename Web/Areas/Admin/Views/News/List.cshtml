@@ -226,9 +226,6 @@
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
-                            else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            }
                         });
                     }
                 });
@@ -274,9 +271,6 @@
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
-                            else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            }
                         });
                     }
                 });
@@ -295,9 +289,6 @@
                         }
                         else if (result.data.status == 302) {
                             window.location.href = result.data.data;
-                        }
-                        else if (result.data.status == 401) {
-                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                         }
                     });
                 });

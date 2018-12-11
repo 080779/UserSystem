@@ -15,7 +15,7 @@ namespace IMS.IService
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
         Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
-        Task<long> AddByExcelAsync(DataTable dt);
+        Task<long> AddByExcelAsync(string mobile, string trueName, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
         /// <summary>
         /// 修改头像，昵称

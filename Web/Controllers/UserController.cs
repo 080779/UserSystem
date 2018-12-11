@@ -16,6 +16,7 @@ namespace IMS.Web.Controllers
     {
         public IUserService userService { get; set; }
         public ISettingService settingService { get; set; }
+        private readonly string mainUrl = System.Configuration.ConfigurationManager.AppSettings["MainUrl"];
 
         #region 登录
         [HttpGet]
@@ -150,7 +151,7 @@ namespace IMS.Web.Controllers
         public async Task<ActionResult> QrCode()
         {
             string userCode = await userService.GetUserCodeByIdAsync(CookieHelper.GetLoginId());
-            string url = "http://104.151.50.99:8359/user/register?recommend=" + userCode;
+            string url = mainUrl + "/user/register?recommend=" + userCode;
             return View((object)url);
         }
         #endregion
@@ -166,9 +167,9 @@ namespace IMS.Web.Controllers
 
         #region 会员信息
         [PublicViewBag("会员权益")]//SYSAuthorizationFilter中含有这个标记的action添加公共的viewbag到布局页中
-        public async Task<ActionResult> Info(long id)
+        public async Task<ActionResult> Info()
         {
-            var model = await userService.GetModelAsync(id);
+            var model = await userService.GetModelAsync(CookieHelper.GetLoginId());
             return View(model);
         }
         #endregion

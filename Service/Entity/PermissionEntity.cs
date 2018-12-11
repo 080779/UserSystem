@@ -14,6 +14,7 @@ namespace IMS.Service.Entity
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Remark { get; set; }
         public long PermissionTypeId { get; set; }
         public virtual PermissionTypeEntity PermissionType { get; set; }
         public virtual ICollection<AdminEntity> Admins { get; set; } = new List<AdminEntity>();

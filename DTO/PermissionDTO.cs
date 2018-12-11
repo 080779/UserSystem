@@ -10,6 +10,7 @@ namespace IMS.DTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Remark { get; set; }
         public long PermissionTypeId { get; set; }
         public string PermissionTypeName { get; set; }
         public bool IsChecked { get; set; } = false;

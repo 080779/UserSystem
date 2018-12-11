@@ -21,6 +21,7 @@ namespace IMS.Service.Service
             dto.Id = entity.Id;
             dto.Name = entity.Name;
             dto.SortCode = entity.SortCode;
+            dto.Remark = entity.Remark;
             return dto;
         }
         public async Task<PermissionTypeDTO[]> GetModelList()

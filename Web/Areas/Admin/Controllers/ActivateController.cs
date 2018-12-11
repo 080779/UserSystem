@@ -66,6 +66,5 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "批量激活会员成功" });
         }
         #endregion
-
     }
 }

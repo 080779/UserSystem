@@ -10,6 +10,7 @@ namespace IMS.DTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Remark { get; set; }
         public int SortCode { get; set; }
     }
 }

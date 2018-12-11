@@ -22,6 +22,7 @@ namespace IMS.Service.Service
             dto.PermissionTypeName = entity.PermissionType.Name;
             dto.CreateTime = entity.CreateTime;
             dto.Id = entity.Id;
+            dto.Remark = entity.Remark;
             return dto;
         }
         public async Task<PermissionDTO[]> GetByTypeIdAsync(long id)
