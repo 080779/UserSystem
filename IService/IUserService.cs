@@ -25,7 +25,7 @@ namespace IMS.IService
         /// <param name="nickName">要修改的昵称（为null不修改）</param>
         /// <param name="headpic">要修改的头像地址（为null不修改）</param>
         /// <returns></returns>
-        Task<bool> UpdateInfoAsync(long id,string nickName, string headpic);
+        Task<bool> UpdateInfoAsync(long id,string nickName, string headpic, string trueName);
         Task<bool> UpdateShareCodeAsync(long id, string codeUrl);
         Task<bool> UpdateTeamShareCodeAsync(long id, string codeUrl);
         Task<bool> UpdatePhone(long id, string phone);

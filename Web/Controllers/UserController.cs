@@ -155,6 +155,7 @@ namespace IMS.Web.Controllers
         public async Task<ActionResult> QrCode()
         {
             string userCode = await userService.GetUserCodeByIdAsync(CookieHelper.GetLoginId());
+
             string url = mainUrl + "/user/register?recommend=" + userCode;
             return View((object)url);
         }
@@ -175,6 +176,16 @@ namespace IMS.Web.Controllers
         {
             var model = await userService.GetModelAsync(CookieHelper.GetLoginId());
             return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> Edit(long id,string trueName)
+        {
+            var res = await userService.UpdateInfoAsync(id, null, null, trueName);
+            if (!res)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "修改失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "修改成功" });
         }
         #endregion
     }

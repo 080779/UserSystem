@@ -245,7 +245,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> UpdateInfoAsync(long id, string nickName, string headpic)
+        public async Task<bool> UpdateInfoAsync(long id, string nickName, string headpic,string trueName)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -254,13 +254,17 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                if (nickName != null)
+                if (!string.IsNullOrEmpty(nickName))
                 {
                     entity.NickName = nickName;
                 }
-                if (headpic != null)
+                if (!string.IsNullOrEmpty(headpic))
                 {
                     entity.HeadPic = headpic;
+                }
+                if(!string.IsNullOrEmpty(trueName))
+                {
+                    entity.TrueName = trueName;
                 }
                 await dbc.SaveChangesAsync();
                 return true;

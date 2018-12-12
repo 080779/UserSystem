@@ -28,7 +28,7 @@
 
                             <div class="form-group">
                                 <label class="col-md-3 control-label">姓名：</label>
-                                <div class="col-md-3">                                   
+                                <div class="col-md-3">
                                     <input class="form-control" id="trueName" value="@Model.TrueName" type="text" placeholder="姓名">
                                 </div>
                             </div>
@@ -36,7 +36,8 @@
                             <div class="form-group">
                                 <label class="col-md-3 control-label"></label>
                                 <div class="col-md-9">
-                                    <button class="btn btn-custom" v-on:click="commit">提 交</button>
+                                    <button class="btn btn-custom" id="commit">提 交</button>
+                                    <input type="hidden" id="id" value="@Model.Id" />
                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                 </div>
                             </div>
@@ -47,3 +48,25 @@
         </div>
     </div>
 </div>
+<script>
+    $("#commit").click(function () {
+        var id = $("#id").val();
+        var trueName = $("#trueName").val();
+        $.ajax({
+            url: "/user/edit",
+            data: { id: id, trueName: trueName },
+            type: "post",
+            success: function (res) {
+                if (res.status == 0) {
+                    layer.msg(res.msg);
+                }
+                else if (res.status == 1) {
+                    layer.msg(res.msg);
+                }
+            },
+            error: function () {
+                console.log("网络错误");
+            }
+        });
+    });
+</script>

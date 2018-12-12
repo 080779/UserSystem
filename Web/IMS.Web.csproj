@@ -534,6 +534,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="images\000.jpg" />
     <Content Include="images\002.jpg" />
+    <Content Include="images\admin_home_bg.jpg" />
     <Content Include="images\del.png" />
     <Content Include="images\login-logo.png" />
     <Content Include="images\upload.png" />

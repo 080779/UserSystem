@@ -45,8 +45,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = result.PageCount;
             return Json(new AjaxResult { Status = 1, Data = model });
         }
-        [Permission("管理员管理_添加管理员")]
-        [AdminLog("管理员管理", "添加管理员")]
+        [Permission("管理员管理_新增管理员")]
+        [AdminLog("管理员管理", "新增管理员")]
         public async Task<ActionResult> Add(string mobile,string password)
         {
             string adminMobile = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Mobile;
