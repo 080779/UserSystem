@@ -189,7 +189,7 @@ namespace IMS.Service.Service
                     }
 
                     //推荐奖
-                    decimal param= (decimal)30 / 100;
+                    decimal param= (await dbc.GetDecimalParamAsync("直接推荐奖励比例")) / 100;
                     decimal blance = 100 * param;
                     recUser.Amount = recUser.Amount + blance;
 
@@ -224,6 +224,8 @@ namespace IMS.Service.Service
                         count ++;
                     }
 
+                    decimal param1 = (await dbc.GetDecimalParamAsync("招募创客6到9个奖金比例")) / 100;
+                    decimal param2 = (await dbc.GetDecimalParamAsync("招募创客大于9个奖金比例")) / 100;
                     //领导奖
                     while (recommendId > 0 && recCount >= 6)
                     {
@@ -353,7 +355,7 @@ namespace IMS.Service.Service
                 }
 
                 //推荐奖
-                decimal param = (decimal)30 / 100;
+                decimal param = (await dbc.GetDecimalParamAsync("直接推荐奖励比例")) / 100;
                 decimal blance = 100 * param;
                 recUser.Amount = recUser.Amount + blance;
 
@@ -388,6 +390,8 @@ namespace IMS.Service.Service
                     count++;
                 }
 
+                decimal param1 = (await dbc.GetDecimalParamAsync("招募创客6到9个奖金比例")) / 100;
+                decimal param2 = (await dbc.GetDecimalParamAsync("招募创客大于9个奖金比例")) / 100;
                 //领导奖
                 while (recommendId > 0 && recCount >= 6)
                 {
@@ -402,7 +406,7 @@ namespace IMS.Service.Service
                     }
                     else if (recCount >= 6 & recCount < 10)
                     {
-                        blance = blance * 60 / 100;
+                        blance = blance * param1 / 100;
                         recUser.Amount = recUser.Amount + blance;
                         count = 0;
 
@@ -430,7 +434,7 @@ namespace IMS.Service.Service
                     }
                     else
                     {
-                        blance = blance * 80 / 100;
+                        blance = blance * param2 / 100;
                         recUser.Amount = recUser.Amount + blance;
                         count++;
                         if (count >= 10 && recUser.LevelId == (int)LevelEnum.贵宾会员)
