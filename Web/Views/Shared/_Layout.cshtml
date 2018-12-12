@@ -95,7 +95,7 @@
                     <h5><a>@ViewBag.LevelName</a></h5>
                     <h5><a href="/user/member/PersonalInfo.aspx">@ViewBag.Mobile</a> </h5>
                     <h5><a>@ViewBag.Amount</a></h5>
-                    <ul class="list-inline">
+                    @*<ul class="list-inline">
                         <li onclick="window.location.href='/user/info'">
                             <a>
                                 <i class="zmdi zmdi-settings"></i>
@@ -108,7 +108,7 @@
                             </a>
                         </li>
 
-                    </ul>
+                    </ul>*@
                 </div>
                 <!-- End User -->
                 <div id="sidebar-menu">
@@ -133,14 +133,6 @@
 
                         <li class="has_sub">
                             <a href="/recommendTree/info" class="waves-effect"><i class="fa fa-user"></i><span>直推图 </span><span class="menu-arrow"></span></a>
-                            @*<ul class="list-unstyled">
-                                    <li><a href="/user/index.aspx" class="waves-effect"><span>用户信息</span></a></li>
-                                    <li><a href="/user/member/PersonalInfo.aspx">会员资料</a></li>
-                                    <li><a href="/user/member/ModifyPassWord.aspx">修改密码</a></li>
-
-
-                                    <li><a href="/user/member/UserBank.aspx">银行卡管理</a></li>
-                                </ul>*@
                         </li>
                         @if (ViewBag.IsUpgraded)
                         {
@@ -151,6 +143,12 @@
                                 <a href="/user/qrcode" class="waves-effect"><i class="zmdi zmdi-chart"></i><span>推荐二维码</span><span class="menu-arrow"></span></a>
                             </li>
                         }
+                        <li class="has_sub">
+                            <a href="/user/info" class="waves-effect"><i class="zmdi zmdi-settings"></i><span>完善资料</span><span class="menu-arrow"></span></a>
+                            </li>
+                        <li class="has_sub">
+                                <a href="/user/logout" class="waves-effect"><i class="zmdi zmdi-power"></i><span>退出</span><span class="menu-arrow"></span></a>
+                            </li>
                     </ul>
                     <div class="clearfix"></div>
                 </div>

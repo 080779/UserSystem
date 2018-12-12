@@ -331,11 +331,22 @@ namespace IMS.Service.Service
                 entity.IsUpgraded = true;
                 entity.Amount = entity.Amount + 100;
 
+                BonusEntity bonus = new BonusEntity();
+                bonus.UserId = entity.Id;
+                bonus.Amount = 100;
+                bonus.Revenue = 0;
+                bonus.sf = 100;
+                bonus.TypeID = 1; //购买课程奖励
+                bonus.Source = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
+                bonus.FromUserID = entity.Id;
+                bonus.IsSettled = 1;
+                dbc.Bonus.Add(bonus);
+
                 JournalEntity journal = new JournalEntity();
                 journal.UserId = entity.Id;
                 journal.BalanceAmount = entity.Amount;
                 journal.InAmount = 100;
-                journal.Remark = "用户(" + entity.Mobile + ")激活成功，赠送碳积分";
+                journal.Remark = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
                 journal.JournalTypeId = (int)JournalTypeEnum.会员激活;
                 journal.OrderCode = "";
                 journal.GoodsId = 0;//来至订单ID
@@ -359,6 +370,29 @@ namespace IMS.Service.Service
                         return false;
                     }
                     entity.IsUpgraded = true;
+                    entity.Amount = entity.Amount + 100;
+
+                    BonusEntity bonus = new BonusEntity();
+                    bonus.UserId = entity.Id;
+                    bonus.Amount = 100;
+                    bonus.Revenue = 0;
+                    bonus.sf = 100;
+                    bonus.TypeID = 1; //购买课程奖励
+                    bonus.Source = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
+                    bonus.FromUserID = entity.Id;
+                    bonus.IsSettled = 1;
+                    dbc.Bonus.Add(bonus);
+
+                    JournalEntity journal = new JournalEntity();
+                    journal.UserId = entity.Id;
+                    journal.BalanceAmount = entity.Amount;
+                    journal.InAmount = 100;
+                    journal.Remark = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
+                    journal.JournalTypeId = (int)JournalTypeEnum.会员激活;
+                    journal.OrderCode = "";
+                    journal.GoodsId = 0;//来至订单ID
+                    journal.CurrencyType = (int)CurrencyEnums.碳积分;
+                    dbc.Journals.Add(journal);
                 }
                 await dbc.SaveChangesAsync();
                 return true;
