@@ -16,7 +16,7 @@ namespace IMS.Web.Controllers
     {
         public IUserService userService { get; set; }
         public ISettingService settingService { get; set; }
-        private readonly string mainUrl = System.Configuration.ConfigurationManager.AppSettings["MainUrl"];
+        //private readonly string mainUrl = System.Configuration.ConfigurationManager.AppSettings["MainUrl"];
 
         #region 登录
         [HttpGet]
@@ -155,8 +155,9 @@ namespace IMS.Web.Controllers
         public async Task<ActionResult> QrCode()
         {
             string userCode = await userService.GetUserCodeByIdAsync(CookieHelper.GetLoginId());
-
-            string url = mainUrl + "/user/register?recommend=" + userCode;
+            string mainUrl;
+            mainUrl = HttpContext.Request.Url.ToString().ToLower().Replace("qrcode","");
+            string url = mainUrl + "register?recommend=" + userCode;
             return View((object)url);
         }
         #endregion
