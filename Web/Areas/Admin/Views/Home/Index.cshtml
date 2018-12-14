@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <title>后台管理系统</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @*<meta name="viewport" content="width=device-width, initial-scale=1.0" />*@
     <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/assets/css/font-awesome.min.css" />
     <link rel="stylesheet" href="~/assets/css/ace.min.css" />
@@ -14,9 +14,9 @@
     <link rel="shortcut icon" href="~/images/user.png" />
     <script src="~/assets/js/ace-extra.min.js"></script>
     <script src="~/areas/admin/js/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         if ("ontouchend" in document) document.write("<script src='/assets/js/jquery.mobile.custom.min.js'>" + "<" + "script>");
-    </script>
+    </script>*@
     <script src="~/assets/js/bootstrap.min.js"></script>
     <script src="~/assets/js/typeahead-bs2.min.js"></script>
     <script src="~/assets/js/ace-elements.min.js"></script>
@@ -50,16 +50,16 @@
             $(".submenu").height();
             $("#nav_list").children(".submenu").css("height", thisHeight);
 
-            //当文档窗口发生改变时 触发
-            $(window).resize(function () {
-                $("#main-container").height($(window).height() - 76);
-                $("#iframe").height($(window).height() - 140);
-                $(".sidebar").height($(window).height() - 99);
+            ////当文档窗口发生改变时 触发
+            //$(window).resize(function () {
+            //    $("#main-container").height($(window).height() - 76);
+            //    $("#iframe").height($(window).height() - 140);
+            //    $(".sidebar").height($(window).height() - 99);
 
-                var thisHeight = $("#nav_list").height($(window).outerHeight() - 173);
-                $(".submenu").height();
-                $("#nav_list").children(".submenu").css("height", thisHeight);
-            });
+            //    var thisHeight = $("#nav_list").height($(window).outerHeight() - 173);
+            //    $(".submenu").height();
+            //    $("#nav_list").children(".submenu").css("height", thisHeight);
+            //});
             $(".iframeurl").click(function () {
                 var cid = $(this).attr("name");
                 var cname = $(this).attr("title");

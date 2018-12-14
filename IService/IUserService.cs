@@ -17,7 +17,7 @@ namespace IMS.IService
         Task<long> AddAsync(string mobile, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<long> AddByExcelAsync(string mobile, string trueName, int levelTypeId, string password, string tradePassword, string recommend, string nickName, string avatarUrl);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
-        Task<bool> AddAntegralAsync(long id,int integral);
+        Task<bool> AddAntegralAsync(long id,decimal integral);
         /// <summary>
         /// 修改头像，昵称
         /// </summary>
@@ -89,6 +89,8 @@ namespace IMS.IService
         Task<UserDTO> GetModelByMobileAsync(string mobile);
         Task<UserRecommendTreeDTO> GetModelTreeByMobileAsync(string mobile);
         Task<UserDTO> GetModelByUserCodeAsync(string userCode);
+        Task<UserDTO[]> GetAllAsync();
+        Task<UserDTO[]> GetAllInactiveAsycn();
         /// <summary>
         /// 获取用户列表
         /// </summary>

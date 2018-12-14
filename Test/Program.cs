@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IMS.Service.Service;
 using IMS.DTO;
+using System.Reflection;
 
 namespace Test
 {
@@ -162,7 +163,6 @@ namespace Test
             }
             Console.ReadKey();
         }
-
         static void Main3(string[] args)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -184,7 +184,6 @@ namespace Test
             }
             Console.ReadKey();
         }
-
         static void Main23(string[] args)
         {
             decimal d = (decimal)5.23;
@@ -196,11 +195,33 @@ namespace Test
 
         static void Main(string[] args)
         {
-            using(MyDbContext dbc=new MyDbContext())
+
+            using (MyDbContext dbc = new MyDbContext())
             {
-                var res = dbc.GetAll<BonusEntity>().Where(b => b.UserId == 1 && b.TypeID == 2).Max(b => b.Bonus001);
-                Console.ReadKey();
+                var user = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == 1);
+                var ids = GetUsers(dbc,user.Id);
+                if(dbc.GetAll<UserEntity>().Count(u=>ids.Contains(u.Id) && u.LevelId==2)>=2)
+                {
+                    user.LevelId = 3;
+                    dbc.SaveChanges();
+                }
+                Console.ReadKey();                
             }
+        }
+        public static List<long> items = new List<long>();
+
+        public static List<long> GetUsers(MyDbContext dbc, long id)
+        {
+            List<long> ids = dbc.GetAll<UserEntity>().Where(u => u.RecommendId == id).Select(u => u.Id).ToList();
+            items.AddRange(ids);
+            if (ids.LongCount()>0)
+            {
+                foreach (long item in ids)
+                {
+                    return GetUsers(dbc, item);
+                }
+            }
+            return items;
         }
 
         private static GoodsCarDTO ToDTO(GoodsCarEntity entity, string imgUrl)

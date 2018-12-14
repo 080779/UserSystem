@@ -2,8 +2,9 @@
 using IMS.DTO;
 using IMS.IService;
 using IMS.Service;
-using IMS.Web.App_Start.Filter;
+using IMS.Web.App_Start.Attributes;
 using IMS.Web.Areas.Admin.Models.User;
+using SDMS.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -64,6 +65,26 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "批量激活会员失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "批量激活会员成功" });
+        }
+        #endregion
+
+        #region 导出未激活用户
+        [Permission("会员管理_导出未激活用户")]
+        [AdminLog("会员管理", "导出未激活用户")]
+        public async Task<ActionResult> Export()
+        {
+            var res = await userService.GetAllInactiveAsycn();
+            UserExportExcelModel[] result = res.Select(o => new UserExportExcelModel
+            {
+                Amount = o.Amount,
+                CreateTime = o.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                Mobile = o.Mobile,
+                RecommendCode = o.RecommendCode,
+                TrueName = o.TrueName,
+                IsActivate = o.IsUpgraded ? "已激活" : "未激活",
+                LvevlName = o.LevelName
+            }).ToArray();
+            return File(ExcelHelper.ExportExcel<UserExportExcelModel>(result, "未激活会员信息"), "application/vnd.ms-excel", "未激活会员信息.xls");
         }
         #endregion
     }

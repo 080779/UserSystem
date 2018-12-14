@@ -15,7 +15,7 @@ namespace IMS.Service.Service
 {
     public class CourseOrderService : ICourseOrderService
     {
-        public CourseOrderDTO ToDTO(CourseOrderEntity entity)
+        public CourseOrderDTO ToDTO(CourseOrderEntity entity,string url)
         {
             CourseOrderDTO dto = new CourseOrderDTO();
             dto.Id = entity.Id;
@@ -30,6 +30,7 @@ namespace IMS.Service.Service
             dto.CreateTime = entity.CreateTime;
             dto.DiscountAmount = entity.DiscountAmount;
             dto.ImgUrl = entity.ImgUrl;
+            dto.Url = string.IsNullOrEmpty(url) ? url : url.Contains("http://") ? url : "http://" + url;
             dto.OrderStateName = entity.OrderStateId.GetEnumName<CourseOrderStateEnum>();
             return dto;
         }
@@ -103,11 +104,201 @@ namespace IMS.Service.Service
                 await dbc.SaveChangesAsync();
 
                 //积分购买课程发放奖励
-                await IntegralBuyAsync(entity.Id);
+                //await IntegralBuyAsync(entity.Id);
+
+                //积分购买课程升级
+                await IntegralBuyUpAsync(dbc,buyerId);
+                //积分购买课程奖励
+                await IntegralBuyBonusAsync(dbc,entity.Id);
+
                 return entity.Id;
             }
         }
 
+        #region 积分购买课程会员直推升级
+        /// <summary>
+        /// 积分购买课程会员升级
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task IntegralBuyUpAsync(MyDbContext dbc, long buyerId)
+        {
+            UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == buyerId);
+            //未激活会员
+            if (!user.IsUpgraded)
+            {
+                return;
+            }
+            //不是普通会员，无法升级
+            if (user.LevelId != (int)LevelEnum.普通会员)
+            {
+                return;
+            }
+            else
+            {
+                //购买课程成功，会员升级为节点会员
+                user.LevelId = (int)LevelEnum.创客会员;
+                await dbc.SaveChangesAsync();
+            }
+
+            if (user.RecommendId <= 0)
+            {
+                return;
+            }
+
+            UserEntity recUser = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == user.RecommendId);
+            long count = 0;
+            count = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId == (int)LevelEnum.创客会员);
+            if (count >= 2 && recUser.LevelId <= (int)LevelEnum.创客会员)
+            {
+                recUser.LevelId = (int)LevelEnum.贵宾会员;
+                await dbc.SaveChangesAsync();
+            }
+
+            if (recUser.RecommendId <= 0)
+            {
+                return;
+            }
+
+            UserEntity recUser1 = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == recUser.RecommendId);
+            count = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser1.Id && u.LevelId == (int)LevelEnum.贵宾会员);
+            if (count >= 2 && recUser1.LevelId <= (int)LevelEnum.贵宾会员)
+            {
+                recUser.LevelId = (int)LevelEnum.超级会员;
+                await dbc.SaveChangesAsync();
+            }
+        }
+        #endregion
+
+        #region 积分购买课程发放奖励
+        /// <summary>
+        /// 积分购买课程发放奖励
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task IntegralBuyBonusAsync(MyDbContext dbc, long courseId)
+        {
+            var course = await dbc.GetAll<CourseOrderEntity>().SingleOrDefaultAsync(c => c.Id == courseId);
+            if (course == null)
+            {
+                return;
+            }
+
+            long recommendId = await dbc.GetAll<UserEntity>().Where(u => u.Id == course.BuyerId).Select(u => u.RecommendId).SingleOrDefaultAsync();
+
+            if (recommendId <= 0)
+            {
+                return;
+            }
+
+            string userMobile = await dbc.GetParameterAsync<UserEntity>(u => u.Id == course.BuyerId, u => u.Mobile);
+            UserEntity recUser = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == recommendId);
+
+            //推荐奖
+            decimal param = (await dbc.GetDecimalParamAsync("直接推荐奖励比例")) / 100;
+            decimal givingAmount = await dbc.GetDecimalParamAsync("激活赠送积分数量");
+            decimal blance = givingAmount * param;
+            recUser.Amount = recUser.Amount + blance;
+
+            BonusEntity entity1 = new BonusEntity();
+            entity1.UserId = recUser.Id;
+            entity1.Amount = blance;
+            entity1.Revenue = 0;
+            entity1.sf = blance;
+            entity1.TypeID = 2; //直接推荐奖
+            entity1.Source = "用户(" + userMobile + ")购买课程,用户(" + recUser.Mobile + ")获得直接推荐奖励";
+            entity1.FromUserID = course.BuyerId;
+            entity1.IsSettled = 1;
+            dbc.Bonus.Add(entity1);
+
+            JournalEntity journal1 = new JournalEntity();
+            journal1.UserId = recUser.Id;
+            journal1.BalanceAmount = recUser.Amount;
+            journal1.InAmount = blance;
+            journal1.Remark = "用户(" + userMobile + ")购买课程,用户(" + recUser.Mobile + ")获得直接推荐奖励";
+            journal1.JournalTypeId = (int)JournalTypeEnum.直推奖;
+            journal1.OrderCode = course.Code;
+            journal1.GoodsId = course.CourseId;//来至订单ID
+            journal1.CurrencyType = (int)CurrencyEnums.碳积分;
+            dbc.Journals.Add(journal1);
+
+            recommendId = recUser.RecommendId;
+            long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
+
+            decimal param1 = (await dbc.GetDecimalParamAsync("招募创客6到9个奖金比例")) / 100;
+            decimal param2 = (await dbc.GetDecimalParamAsync("招募创客大于9个奖金比例")) / 100;
+            //领导奖
+            while (recommendId > 0)
+            {
+                recUser = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == recommendId);
+                recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
+                recommendId = recUser.RecommendId;
+
+                if (recCount < 3)
+                {
+                    continue;
+                }
+                else if (recCount >= 3 & recCount < 4)
+                {
+                    blance = blance * param1 / 100;
+                    recUser.Amount = recUser.Amount + blance;
+
+                    BonusEntity entity2 = new BonusEntity();
+                    entity2.UserId = recUser.Id;
+                    entity2.Amount = blance;
+                    entity2.Revenue = 0;
+                    entity2.sf = blance;
+                    entity2.TypeID = 3; //领导奖
+                    entity2.Source = "用户(" + userMobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
+                    entity2.FromUserID = course.BuyerId;
+                    entity2.IsSettled = 1;
+                    dbc.Bonus.Add(entity2);
+
+                    JournalEntity journal2 = new JournalEntity();
+                    journal2.UserId = recUser.Id;
+                    journal2.BalanceAmount = recUser.Amount;
+                    journal2.InAmount = blance;
+                    journal2.Remark = "用户(" + userMobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
+                    journal2.JournalTypeId = (int)JournalTypeEnum.领导奖;
+                    journal2.OrderCode = course.Code;
+                    journal2.GoodsId = course.CourseId;//来至订单ID
+                    journal2.CurrencyType = (int)CurrencyEnums.碳积分;
+                    dbc.Journals.Add(journal1);
+                }
+                else
+                {
+                    blance = blance * param2 / 100;
+                    recUser.Amount = recUser.Amount + blance;
+
+                    BonusEntity entity3 = new BonusEntity();
+                    entity3.UserId = recUser.Id;
+                    entity3.Amount = blance;
+                    entity3.Revenue = 0;
+                    entity3.sf = blance;
+                    entity3.TypeID = 3; //领导奖
+                    entity3.Source = "用户(" + userMobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
+                    entity3.FromUserID = course.BuyerId;
+                    entity3.IsSettled = 1;
+                    dbc.Bonus.Add(entity3);
+
+                    JournalEntity journal3 = new JournalEntity();
+                    journal3.UserId = recUser.Id;
+                    journal3.BalanceAmount = recUser.Amount;
+                    journal3.InAmount = blance;
+                    journal3.Remark = "用户(" + userMobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
+                    journal3.JournalTypeId = (int)JournalTypeEnum.领导奖;
+                    journal3.OrderCode = course.Code;
+                    journal3.GoodsId = course.CourseId;//来至订单ID
+                    journal3.CurrencyType = (int)CurrencyEnums.碳积分;
+                    dbc.Journals.Add(journal3);
+                }
+            }
+
+            await dbc.SaveChangesAsync();
+        }
+        #endregion
+
+        #region 金钱购买课程审核
         public async Task<bool> AuditAsync(long id, int stateId, long auditorId)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -140,17 +331,17 @@ namespace IMS.Service.Service
                         await dbc.SaveChangesAsync();
                         return true;
                     }
-
+                    decimal givingAmount = await dbc.GetDecimalParamAsync("激活赠送积分数量");
                     if(user.LevelId != (int)LevelEnum.普通会员)
                     {
                         //购买课程成功，获得100碳积分
-                        user.Amount = user.Amount + 100;                        
+                        user.Amount = user.Amount + givingAmount;                        
                     }
                     else
                     {
                         //购买课程成功，会员升级为节点会员,获得100碳积分
                         user.LevelId = (int)LevelEnum.创客会员;
-                        user.Amount = user.Amount + 100;
+                        user.Amount = user.Amount + givingAmount;
                     }
                     
                     BonusEntity entity = new BonusEntity();
@@ -190,7 +381,7 @@ namespace IMS.Service.Service
 
                     //推荐奖
                     decimal param= (await dbc.GetDecimalParamAsync("直接推荐奖励比例")) / 100;
-                    decimal blance = 100 * param;
+                    decimal blance = givingAmount * param;
                     recUser.Amount = recUser.Amount + blance;
 
                     BonusEntity entity1 = new BonusEntity();
@@ -305,13 +496,15 @@ namespace IMS.Service.Service
                 }
             }
         }
+        #endregion
 
+        #region 积分购买课程会员线下升级
         /// <summary>
-        /// 积分购买课程发放奖励
+        /// 积分购买课程会员升级
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<bool> IntegralBuyAsync(long id)
+        public async Task<bool> IntegralBuyLineUpAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -344,139 +537,58 @@ namespace IMS.Service.Service
                 }
 
                 UserEntity recUser = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == user.RecommendId);
-                if(!recUser.IsUpgraded)
+                var ids = await GetUserIdsAsync(dbc, recUser.Id);
+                if (await dbc.GetAll<UserEntity>().LongCountAsync(u => ids.Contains(u.Id) && u.LevelId >= (int)LevelEnum.贵宾会员) >= 2 && recUser.LevelId <= (int)LevelEnum.贵宾会员)
                 {
-                    return true;
+                    recUser.LevelId = (int)LevelEnum.超级会员;
                 }
-
-                if (recUser.LevelId == (int)LevelEnum.普通会员)
-                {
-                    return true;
-                }
-
-                //推荐奖
-                decimal param = (await dbc.GetDecimalParamAsync("直接推荐奖励比例")) / 100;
-                decimal blance = 100 * param;
-                recUser.Amount = recUser.Amount + blance;
-
-                BonusEntity entity1 = new BonusEntity();
-                entity1.UserId = recUser.Id;
-                entity1.Amount = blance;
-                entity1.Revenue = 0;
-                entity1.sf = blance;
-                entity1.TypeID = 2; //直接推荐奖
-                entity1.Source = "用户(" + user.Mobile + ")购买课程,用户(" + recUser.Mobile + ")获得直接推荐奖励";
-                entity1.FromUserID = user.Id;
-                entity1.IsSettled = 1;
-                dbc.Bonus.Add(entity1);
-
-                JournalEntity journal1 = new JournalEntity();
-                journal1.UserId = recUser.Id;
-                journal1.BalanceAmount = recUser.Amount;
-                journal1.InAmount = blance;
-                journal1.Remark = "用户(" + user.Mobile + ")购买课程,用户(" + recUser.Mobile + ")获得直接推荐奖励";
-                journal1.JournalTypeId = (int)JournalTypeEnum.直推奖;
-                journal1.OrderCode = course.Code;
-                journal1.GoodsId = course.CourseId;//来至订单ID
-                journal1.CurrencyType = (int)CurrencyEnums.碳积分;
-                dbc.Journals.Add(journal1);
-
-                long recommendId = recUser.RecommendId;
-                int count = 0;
-                long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId == (int)LevelEnum.创客会员);
-                if (recCount >= 10)
+                else if (await dbc.GetAll<UserEntity>().LongCountAsync(u => ids.Contains(u.Id) && u.LevelId >= (int)LevelEnum.创客会员) >= 2 && recUser.LevelId <= (int)LevelEnum.创客会员)
                 {
                     recUser.LevelId = (int)LevelEnum.贵宾会员;
-                    count++;
                 }
-
-                decimal param1 = (await dbc.GetDecimalParamAsync("招募创客6到9个奖金比例")) / 100;
-                decimal param2 = (await dbc.GetDecimalParamAsync("招募创客大于9个奖金比例")) / 100;
-                //领导奖
-                while (recommendId > 0 && recCount >= 6)
-                {
-                    recUser = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == recommendId);
-                    recCount = await dbc.GetAll<UserEntity>().AsNoTracking()
-                        .LongCountAsync(u => u.RecommendId == recUser.Id && (u.LevelId == (int)LevelEnum.贵宾会员 || u.LevelId == (int)LevelEnum.超级会员));
-                    recommendId = recUser.RecommendId;
-
-                    if (recCount < 6)
-                    {
-                        break;
-                    }
-                    else if (recCount >= 6 & recCount < 10)
-                    {
-                        blance = blance * param1 / 100;
-                        recUser.Amount = recUser.Amount + blance;
-                        count = 0;
-
-                        BonusEntity entity2 = new BonusEntity();
-                        entity2.UserId = recUser.Id;
-                        entity2.Amount = blance;
-                        entity2.Revenue = 0;
-                        entity2.sf = blance;
-                        entity2.TypeID = 3; //领导奖
-                        entity2.Source = "用户(" + user.Mobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
-                        entity2.FromUserID = user.Id;
-                        entity2.IsSettled = 1;
-                        dbc.Bonus.Add(entity2);
-
-                        JournalEntity journal2 = new JournalEntity();
-                        journal2.UserId = recUser.Id;
-                        journal2.BalanceAmount = recUser.Amount;
-                        journal2.InAmount = blance;
-                        journal2.Remark = "用户(" + user.Mobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
-                        journal2.JournalTypeId = (int)JournalTypeEnum.领导奖;
-                        journal2.OrderCode = course.Code;
-                        journal2.GoodsId = course.CourseId;//来至订单ID
-                        journal2.CurrencyType = (int)CurrencyEnums.碳积分;
-                        dbc.Journals.Add(journal1);
-                    }
-                    else
-                    {
-                        blance = blance * param2 / 100;
-                        recUser.Amount = recUser.Amount + blance;
-                        count++;
-                        if (count >= 10 && recUser.LevelId == (int)LevelEnum.贵宾会员)
-                        {
-                            recUser.LevelId = (int)LevelEnum.超级会员;
-                        }
-
-                        BonusEntity entity3 = new BonusEntity();
-                        entity3.UserId = recUser.Id;
-                        entity3.Amount = blance;
-                        entity3.Revenue = 0;
-                        entity3.sf = blance;
-                        entity3.TypeID = 3; //领导奖
-                        entity3.Source = "用户(" + user.Mobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
-                        entity3.FromUserID = user.Id;
-                        entity3.IsSettled = 1;
-                        dbc.Bonus.Add(entity3);
-
-                        JournalEntity journal3 = new JournalEntity();
-                        journal3.UserId = recUser.Id;
-                        journal3.BalanceAmount = recUser.Amount;
-                        journal3.InAmount = blance;
-                        journal3.Remark = "用户(" + user.Mobile + ")购买课程,用户(" + recUser.Mobile + ")获得领导奖励";
-                        journal3.JournalTypeId = (int)JournalTypeEnum.领导奖;
-                        journal3.OrderCode = course.Code;
-                        journal3.GoodsId = course.CourseId;//来至订单ID
-                        journal3.CurrencyType = (int)CurrencyEnums.碳积分;
-                        dbc.Journals.Add(journal3);
-                    }
-                }
-
                 await dbc.SaveChangesAsync();
                 return true;
             }
         }
+        public static List<long> items = new List<long>();
+        /// <summary>
+        /// 递归获取线下会员id
+        /// </summary>
+        /// <param name="dbc"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<List<long>> GetUserIdsAsync(MyDbContext dbc, long id)
+        {
+            List<long> ids = await dbc.GetAll<UserEntity>().Where(u => u.RecommendId == id).Select(u => u.Id).ToListAsync();
+            items.AddRange(ids);
+            if (ids.LongCount() > 0)
+            {
+                foreach (long item in ids)
+                {
+                    return await GetUserIdsAsync(dbc, item);
+                }
+            }
+            return items;
+        }
 
-        public async Task<CourseOrderSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        #endregion
+
+
+
+        public async Task<CourseOrderSearchResult> GetModelListAsync(long? buyerId, int? orderStateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 CourseOrderSearchResult result = new CourseOrderSearchResult();
                 var courseOrders = dbc.GetAll<CourseOrderEntity>().AsNoTracking();
+                if (buyerId!=null)
+                {
+                    courseOrders = courseOrders.Where(a => a.BuyerId==buyerId);
+                }
+                if (orderStateId != null)
+                {
+                    courseOrders = courseOrders.Where(a => a.OrderStateId== orderStateId);
+                }
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     courseOrders = courseOrders.Where(a => a.CourseName.Contains(keyword));
@@ -491,7 +603,7 @@ namespace IMS.Service.Service
                 }
                 result.PageCount = (int)Math.Ceiling((await courseOrders.LongCountAsync()) * 1.0f / pageSize);
                 var courseOrderResult = await courseOrders.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                result.CourseOrders = courseOrderResult.Select(a => ToDTO(a)).ToArray();
+                result.CourseOrders = courseOrderResult.Select(a => ToDTO(a,dbc.GetParameter<LinkEntity>(l=>l.Id==a.CourseId,l=>l.Url))).ToArray();
                 return result;
             }
         }

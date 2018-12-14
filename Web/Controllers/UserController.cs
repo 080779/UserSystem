@@ -1,7 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
-using IMS.Web.App_Start.Filter;
+using IMS.Web.App_Start.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,7 +139,7 @@ namespace IMS.Web.Controllers
                 case -1: message = "推荐人不存在"; break;
                 case -2: message = "手机号已经被注册"; break;
                 case -3: message = "注册失败"; break;
-                case -4: message = "未激活会员不能作为推荐人";break;
+                //case -4: message = "未激活会员不能作为推荐人";break;
                 default: break;
             }
             if (res <= 0)

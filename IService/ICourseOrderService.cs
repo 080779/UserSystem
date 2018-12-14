@@ -12,7 +12,7 @@ namespace IMS.IService
         Task<long> AddAsync(long buyerId, string buyerName,long courseId,string imgUrl);
         Task<long> AddAsync(long buyerId, string buyerName, long courseId);
         Task<bool> AuditAsync(long id,int stateId, long auditorId);
-        Task<CourseOrderSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<CourseOrderSearchResult> GetModelListAsync(long? buyerId,int? orderStateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class CourseOrderSearchResult
     {

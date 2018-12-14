@@ -39,6 +39,11 @@
 
 <body>
     <div id="app">
+        <div class="clearfix" style="margin-top:20px">
+            <span class="l_f">
+                <a v-on:click="userexport" class="btn btn-success"><i class="icon-plus"></i>用户信息导出</a>
+            </span>
+        </div>
         <div class="search_style">
             <ul class="search_content clearfix">
                 <li>
@@ -60,10 +65,12 @@
                         <th width="20"><input type="checkbox" class="check_all" value="0" /></th>
                         <th width="60">编号</th>
                         <th width="100">注册时间</th>
-                        <th width="100">UID</th>
-                        <th width="100">昵称</th>
+                        <th width="100">邀请码</th>
+                        <th width="100">会员账号</th>
+                        <th width="100">姓名</th>
+                        <th width="100">推荐人账号</th>
                         <th width="120">等级</th>
-                        <th width="80">余额</th>
+                        <th width="80">碳积分</th>
                         <th width="60">激活状态</th>
                         <th width="120"><a title="批量激活" href="javascript:;" v-on:click="activateAll" class="btn btn-xs btn-warning">批量激活</a></th>
                     </tr>
@@ -74,7 +81,9 @@
                         <td v-html="user.id"></td>
                         <td v-html="user.createTime"></td>
                         <td v-html="user.userCode"></td>
-                        <td v-html="user.nickName"></td>
+                        <td v-html="user.mobile"></td>
+                        <td v-html="user.trueName"></td>
+                        <td v-html="user.recommendCode"></td>
                         <td v-html="user.levelName"></td>
                         <td v-html="user.amount"></td>
                         <td v-html="user.isUpgraded==true?'已激活':'未激活'"></td>
@@ -98,7 +107,7 @@
                 <li><a v-on:click="pages.cur=pages.all,getpage()">尾页</a></li>
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
-        </div>        
+        </div>
     </div>
 </body>
 </html>
@@ -156,6 +165,14 @@
                     this.pages.cur = this.pages.txtpage;
                 }
                 this.getpage();
+            },
+            userexport: function () {
+                var msg = '确认要导出未激活用户信息吗？';
+                var msg1 = '是否导出未激活用户信息';
+                layer.confirm(msg, { icon: 0, title: msg1 }, function () {
+                    window.location.href = '/admin/activate/export';
+                    layer.closeAll('dialog');
+                });
             },
             activate: function (id) {
                 var that = this;

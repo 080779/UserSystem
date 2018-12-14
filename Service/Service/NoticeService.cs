@@ -78,12 +78,26 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<NoticeDTO[]> GetModelListIsEnabledAsync(int pageIndex, int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                NoticeSearchResult result = new NoticeSearchResult();
+                await dbc.GetAll<NoticeEntity>().ForEachAsync(n => { if (n.FailureTime < DateTime.Now) { n.IsEnabled = false; } });
+                await dbc.SaveChangesAsync();
+                var entities = dbc.GetAll<NoticeEntity>().Where(n=>n.IsEnabled==true).AsNoTracking();
+                var noticesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                return noticesResult.Select(a => ToDTO(a)).ToArray(); 
+            }
+        }
+
         public async Task<NoticeSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 NoticeSearchResult result = new NoticeSearchResult();
                 await dbc.GetAll<NoticeEntity>().ForEachAsync(n => { if(n.FailureTime<DateTime.Now){ n.IsEnabled = false;}});
+                await dbc.SaveChangesAsync();
                 var entities = dbc.GetAll<NoticeEntity>().AsNoTracking();
                 if (!string.IsNullOrEmpty(keyword))
                 {

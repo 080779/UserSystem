@@ -13,7 +13,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     {
         public ILinkService linkService { get; set; } 
 
-         #region 图片列表
+        #region 图片列表
         [HttpGet]
         public ActionResult List(long typeId=1)
         {

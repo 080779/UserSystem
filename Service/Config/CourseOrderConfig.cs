@@ -13,6 +13,7 @@ namespace IMS.Service.Config
             Property(p => p.CourseName).HasMaxLength(50);
             Property(p => p.AuditMobile).HasMaxLength(50);
             Property(p => p.ImgUrl).HasMaxLength(256);
+            //Property(p => p.Url).HasMaxLength(256);
         }
     }
 }

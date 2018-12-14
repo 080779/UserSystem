@@ -18,6 +18,7 @@ namespace IMS.Service.Entity
         public string BuyerName { get; set; }
         public long CourseId { get; set; }
         public string CourseName { get; set; }
+        //public string Url { get; set; }
         public string ImgUrl { get; set; }//打款凭证图
         public decimal Amount { get; set; } = 0;
         public decimal DiscountAmount { get; set; } = 0;

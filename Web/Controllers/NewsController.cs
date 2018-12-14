@@ -1,7 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
-using IMS.Web.App_Start.Filter;
+using IMS.Web.App_Start.Attributes;
 using IMS.Web.Models.News;
 using System;
 using System.Collections.Generic;
@@ -15,17 +15,16 @@ namespace IMS.Web.Controllers
     public class NewsController : Controller
     {
         public INoticeService noticeService { get; set; }
+        public async Task<ActionResult> List()
+        {
+            var res = await noticeService.GetModelListIsEnabledAsync(1, 20);
+            return Json(new AjaxResult { Status = 1, Data = res.Select(n => new NewsListViewModel { Code = n.Code, Id = n.Id, CreateTime = n.CreateTime.ToString("[yyyy-MM-dd]") }) });
+        }
         [PublicViewBag("新闻详情")]//SYSAuthorizationFilter中含有这个标记的action添加公共的viewbag到布局页中
         public async Task<ActionResult> Info(long id)
         {
             var model = await noticeService.GetModelAsync(id);
             return View(model);
-        }
-
-        public async Task<ActionResult> List()
-        {
-            var res = await noticeService.GetModelListAsync(null, null, null, 1, 20);
-            return Json(new AjaxResult { Status=1,Data=res.Notices.Select(n=>new NewsListViewModel{ Code=n.Code,Id=n.Id,CreateTime=n.CreateTime.ToString("[yyyy-MM-dd]")})});
         }
     }
 }

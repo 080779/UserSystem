@@ -11,9 +11,11 @@ using IMS.DTO;
 using SDMS.Common;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.Recharge;
+using IMS.Web.App_Start.Attributes;
 
 namespace IMS.Web.Areas.Admin.Controllers
 {
+    [PermController("账户管理")]
     public class AccountController : Controller
     {
         public IRechargeService rechargeService { get; set; }
@@ -24,7 +26,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        //[Permission("会员充值")]
+        [PermAction("账户充值")]
         public async Task<ActionResult> Add(string usercode, int currencyType, int rechargeType, string  money)
         {
             var user = await userService.GetModelByMobileAsync(usercode);

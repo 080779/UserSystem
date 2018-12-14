@@ -13,6 +13,7 @@ namespace IMS.IService
         Task<bool> UpdateAsync(long id, string code, string content, DateTime failureTime);
         Task<bool> DeleteAsync(long id);
         Task<NoticeDTO> GetModelAsync(long id);
+        Task<NoticeDTO[]> GetModelListIsEnabledAsync(int pageIndex, int pageSize);
         Task<NoticeSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class NoticeSearchResult

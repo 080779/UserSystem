@@ -2,7 +2,7 @@
 using IMS.DTO;
 using IMS.IService;
 using IMS.Service;
-using IMS.Web.App_Start.Filter;
+using IMS.Web.App_Start.Attributes;
 using IMS.Web.Areas.Admin.Models.User;
 using SDMS.Common;
 using System;
@@ -172,9 +172,18 @@ namespace IMS.Web.Areas.Admin.Controllers
         #region 赠送积分
         [AdminLog("会员管理", "赠送积分")]
         [Permission("会员管理_赠送积分")]
-        public async Task<ActionResult> Giving(long id,int integral)
+        public async Task<ActionResult> Giving(long id,string integral)
         {
-            bool res = await userService.AddAntegralAsync(id,integral);
+            decimal amount;
+            if(!decimal.TryParse(integral,out amount))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "请输入正确的数字" });
+            }
+            if(amount<=0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "赠送的积分必须大于零" });
+            }
+            bool res = await userService.AddAntegralAsync(id,amount);
             if (!res)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "赠送积分失败" });
@@ -183,32 +192,23 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         #endregion
 
-        #region 导入用户
-        //[AdminLog("会员管理", "删除用户")]
-        //[Permission("会员管理_删除用户")]
-        public async Task<ActionResult> Import(HttpPostedFileBase excelFile)
+        #region 导出用户        
+        [Permission("会员管理_导出用户")]
+        [AdminLog("会员管理", "导出用户")]
+        public async Task<ActionResult> Export()
         {
-            var res = ExcelHelper.SaveExecl(excelFile);
-            if(!res.Key)
+            var res = await userService.GetAllAsync();
+            UserExportExcelModel[] result = res.Select(o => new UserExportExcelModel
             {
-                return Json(new AjaxResult { Status = 0, Msg = res.Value });
-            }
-            var dt = ExcelHelper.GetDataTable(res.Value);
-            long result;
-            foreach (DataRow row in dt.Rows)
-            {
-                result = await userService.AddByExcelAsync(row["电话"].ToString(), row["姓名"].ToString(), 1,"123456",null,row["推荐人"].ToString(),null,null);
-                if(result==-2)
-                {
-                    continue;
-                }
-                if (result <= 0)
-                {
-                    return Json(new AjaxResult { Status = 0, Msg = "导入失败" });
-                }
-            }
-            
-            return Json(new AjaxResult { Status = 1, Msg = "导入成功" });
+                Amount = o.Amount,
+                CreateTime = o.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                Mobile = o.Mobile,
+                RecommendCode = o.RecommendCode,
+                TrueName = o.TrueName,
+                IsActivate = o.IsUpgraded ? "已激活" : "未激活",
+                LvevlName=o.LevelName
+            }).ToArray();
+            return File(ExcelHelper.ExportExcel<UserExportExcelModel>(result, "会员信息"), "application/vnd.ms-excel", "会员信息.xls");
         }
         #endregion
 

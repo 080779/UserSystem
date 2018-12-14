@@ -47,7 +47,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> AddAsync(long typeId, string typeName, string name, string imgUrl, string url, decimal amount, int integral)
+        public async Task<long> AddAsync(long typeId, string typeName, string name, string imgUrl, string url, decimal amount, decimal integral)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -83,7 +83,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> EditAsync(long id, string name, decimal amount, int integral)
+        public async Task<long> EditAsync(long id, string name, string url, decimal amount, decimal integral)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -93,6 +93,7 @@ namespace IMS.Service.Service
                     return -1;
                 }
                 entity.Name = name;
+                entity.Url = url;
                 entity.Link001 = amount;
                 entity.link002 = integral;
                 await dbc.SaveChangesAsync();

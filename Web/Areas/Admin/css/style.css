@@ -146,6 +146,7 @@ a:hover {
 }
 
 body {
+    min-width: 1100px;
     padding-bottom: 0;
     background-color: #ffffff;
     min-height: 100%;

@@ -77,9 +77,6 @@
         el: "#app",
         data: {
             notices: [],
-            pages: {
-                all: "", cur: 1, txtpage: ""
-            },
             searchs: {
                 startTime: "", endTime: "", keyword: ""
             }
@@ -90,7 +87,7 @@
             }
         },
         mounted: function () {
-            this.$http.post('/news/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+            this.$http.post('/news/list', { }, { emulateJSON: true }).then(function (result) {
                 this.notices = result.data.data;
             })
         }

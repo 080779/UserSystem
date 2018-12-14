@@ -13,6 +13,7 @@ namespace IMS.DTO
         public string BuyerName { get; set; }
         public long CourseId { get; set; }
         public string CourseName { get; set; }
+        public string Url { get; set; }
         public string ImgUrl { get; set; }
         public decimal Amount { get; set; }
         public decimal DiscountAmount { get; set; }

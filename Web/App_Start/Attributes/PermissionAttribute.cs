@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace IMS.Web.App_Start.Filter
+namespace IMS.Web.App_Start.Attributes
 {
     /// <summary>
     ///  添加此特性的功能是：需要用户登录才能够浏览网页，如果不需要用户登录，则可以使用AllowAnonymousAttribute属性

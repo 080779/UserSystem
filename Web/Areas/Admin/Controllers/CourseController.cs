@@ -1,6 +1,6 @@
 ﻿using IMS.Common;
 using IMS.IService;
-using IMS.Web.App_Start.Filter;
+using IMS.Web.App_Start.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         [Permission("课程管理_新增课程")]
         [AdminLog("课程管理", "新增课程")]
-        public async Task<ActionResult> Add(string name, int amount)
+        public async Task<ActionResult> Add(string name, decimal amount,string url)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -45,7 +45,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             //{
             //    return Json(new AjaxResult { Status = 0, Msg = res.Value });
             //}
-            long id = await linkService.AddAsync(2,"培训课程", name, null, null,0,amount);
+            long id = await linkService.AddAsync(2, "培训课程", name, null, url, 0, amount);
             if (id <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加课程失败" });
@@ -58,9 +58,9 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         [Permission("课程管理_修改课程")]
         [AdminLog("课程管理", "修改课程")]
-        public async Task<ActionResult> Edit(long id, string name, int amount)
+        public async Task<ActionResult> Edit(long id, string name, decimal amount, string url)
         {
-            var result = await linkService.EditAsync(id, name, 0, amount);
+            var result = await linkService.EditAsync(id, name,url, 0, amount);
             if (result <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "修改课程失败" });

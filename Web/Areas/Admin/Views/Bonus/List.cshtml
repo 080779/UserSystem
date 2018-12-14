@@ -33,7 +33,7 @@
     <script src="~/assets/laydate/laydate.js" type="text/javascript"></script>
     @*<script src="~/assets/src/laydate.js"></script>*@
     <script src="~/areas/admin/js/wangEditor.min.js"></script>
-    <title>培训课程管理</title>
+    <title>积分奖励记录</title>
 </head>
 
 <body>
@@ -57,6 +57,7 @@
                     <tr>
                         <th width="80">编号</th>
                         <th width="80">账号</th>
+                        <th width="80">碳积分</th>
                         <th width="200">记录</th>
                         <th width="100">时间</th>
                     </tr>
@@ -65,6 +66,7 @@
                     <tr>
                         <td v-html="item.id"></td>
                         <td v-html="item.userMobile"></td>
+                        <td v-html="item.amount"></td>
                         <td v-html="item.source"></td>
                         <td v-html="item.createTime"></td>
                     </tr>
@@ -84,7 +86,7 @@
                 <li><a v-on:click="pages.cur=pages.all,getpage()">尾页</a></li>
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
-        </div>                
+        </div>
     </div>
 </body>
 </html>

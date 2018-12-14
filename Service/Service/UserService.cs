@@ -98,10 +98,10 @@ namespace IMS.Service.Service
                     return -1;
                 }
 
-                if(!recUser.IsUpgraded)
-                {
-                    return -4;
-                }
+                //if(!recUser.IsUpgraded)
+                //{
+                //    return -4;
+                //}
 
                 if ((await dbc.GetIdAsync<UserEntity>(u => u.Mobile == mobile)) > 0)
                 {
@@ -230,7 +230,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> AddAntegralAsync(long id, int integral)
+        public async Task<bool> AddAntegralAsync(long id, decimal integral)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -327,15 +327,16 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
+                decimal givingAmount = await dbc.GetDecimalParamAsync("激活赠送积分数量");
                 //激活会员
                 entity.IsUpgraded = true;
-                entity.Amount = entity.Amount + 100;
+                entity.Amount = entity.Amount + givingAmount;
 
                 BonusEntity bonus = new BonusEntity();
                 bonus.UserId = entity.Id;
-                bonus.Amount = 100;
+                bonus.Amount = givingAmount;
                 bonus.Revenue = 0;
-                bonus.sf = 100;
+                bonus.sf = givingAmount;
                 bonus.TypeID = 1; //购买课程奖励
                 bonus.Source = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
                 bonus.FromUserID = entity.Id;
@@ -345,7 +346,7 @@ namespace IMS.Service.Service
                 JournalEntity journal = new JournalEntity();
                 journal.UserId = entity.Id;
                 journal.BalanceAmount = entity.Amount;
-                journal.InAmount = 100;
+                journal.InAmount = givingAmount;
                 journal.Remark = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
                 journal.JournalTypeId = (int)JournalTypeEnum.会员激活;
                 journal.OrderCode = "";
@@ -369,14 +370,15 @@ namespace IMS.Service.Service
                     {
                         return false;
                     }
+                    decimal givingAmount = await dbc.GetDecimalParamAsync("激活赠送积分数量");
                     entity.IsUpgraded = true;
-                    entity.Amount = entity.Amount + 100;
+                    entity.Amount = entity.Amount + givingAmount;
 
                     BonusEntity bonus = new BonusEntity();
                     bonus.UserId = entity.Id;
-                    bonus.Amount = 100;
+                    bonus.Amount = givingAmount;
                     bonus.Revenue = 0;
-                    bonus.sf = 100;
+                    bonus.sf = givingAmount;
                     bonus.TypeID = 1; //购买课程奖励
                     bonus.Source = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
                     bonus.FromUserID = entity.Id;
@@ -386,7 +388,7 @@ namespace IMS.Service.Service
                     JournalEntity journal = new JournalEntity();
                     journal.UserId = entity.Id;
                     journal.BalanceAmount = entity.Amount;
-                    journal.InAmount = 100;
+                    journal.InAmount = givingAmount;
                     journal.Remark = "用户(" + entity.Mobile + ")后台激活成功，获赠碳积分";
                     journal.JournalTypeId = (int)JournalTypeEnum.会员激活;
                     journal.OrderCode = "";
@@ -959,6 +961,24 @@ namespace IMS.Service.Service
                 return ToDTO(user);
             }
         }
+
+        public async Task<UserDTO[]> GetAllAsync()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var users = await dbc.GetAll<UserEntity>().AsNoTracking().ToListAsync();
+                return users.Select(u => ToDTO(u)).ToArray();
+            }
+        }
+        public async Task<UserDTO[]> GetAllInactiveAsycn()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var users = await dbc.GetAll<UserEntity>().Where(u=>u.IsUpgraded==false).AsNoTracking().ToListAsync();
+                return users.Select(u => ToDTO(u)).ToArray();
+            }
+        }
+
         public async Task<UserSearchResult> GetModelListAsync(int? levelId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())

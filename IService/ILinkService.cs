@@ -10,9 +10,9 @@ namespace IMS.IService
     public interface ILinkService : IServiceSupport
     {
         Task<long> AddAsync(long typeId, string name, string imgUrl, string url, int sort);
-        Task<long> AddAsync(long typeId,string typeName, string name, string imgUrl, string url,decimal amount,int integral);
+        Task<long> AddAsync(long typeId,string typeName, string name, string imgUrl, string url,decimal amount, decimal integral);
         Task<long> EditAsync(long id, string name, string imgUrl, string url, int sort);
-        Task<long> EditAsync(long id, string name, decimal amount, int integral);
+        Task<long> EditAsync(long id, string name, string url, decimal amount, decimal integral);
         Task<bool> FrozenAsync(long id);
         Task<bool> DelAsync(long id);
         Task<LinkDTO> GetModelByIdAsync(long id);

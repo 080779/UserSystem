@@ -4,6 +4,7 @@ using Autofac.Integration.WebApi;
 using IMS.Common.Newtonsoft;
 using IMS.IService;
 using IMS.Web.App_Start;
+using IMS.Web.App_Start.Attributes;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Jobs;
 using Quartz;
@@ -58,6 +59,31 @@ namespace Web
             GlobalFilters.Filters.Add(new SYSExceptionFilter());
             GlobalFilters.Filters.Add(new SYSAuthorizationFilter());
 
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            int? levelId = null;
+            string url = null;
+            var types = assembly.DefinedTypes.Where(t => t.BaseType == typeof(Controller) && t.Namespace == "IMS.Web.Areas.Admin.Controllers" && t.GetCustomAttribute(typeof(PermControllerAttribute)) != null);
+            foreach (var item in types)
+            {
+                string ctrName = item.Name.Replace("Controller", "");
+                var typeName = ((PermControllerAttribute)item.GetCustomAttribute(typeof(PermControllerAttribute))).Name;
+                var methods = item.GetMethods().Where(m => (m.ReturnParameter.ParameterType == typeof(ActionResult) || m.ReturnParameter.ParameterType == typeof(Task<ActionResult>)) && m.GetCustomAttribute(typeof(PermActionAttribute)) != null);
+                foreach (var item1 in methods)
+                {
+                    if(item1==methods.First())
+                    {
+                        levelId = 0;
+                        var descName = ((PermActionAttribute)item1.GetCustomAttribute(typeof(PermActionAttribute))).Name;
+                        string actionName = item1.Name;
+                        url = "/admin/" + ctrName + "/" + actionName;
+                    }
+                    else
+                    {
+                        var descName = ((PermActionAttribute)item1.GetCustomAttribute(typeof(PermActionAttribute))).Name;
+                        string actionName = item1.Name;
+                    }
+                }
+            }
            // StartQuartz();
         }
 
