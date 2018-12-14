@@ -149,7 +149,7 @@ namespace IMS.Service.Service
             UserEntity recUser = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == user.RecommendId);
             long count = 0;
             count = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId == (int)LevelEnum.创客会员);
-            if (count >= 2 && recUser.LevelId <= (int)LevelEnum.创客会员)
+            if (count >= 10 && recUser.LevelId <= (int)LevelEnum.创客会员)
             {
                 recUser.LevelId = (int)LevelEnum.贵宾会员;
                 await dbc.SaveChangesAsync();
@@ -162,7 +162,7 @@ namespace IMS.Service.Service
 
             UserEntity recUser1 = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == recUser.RecommendId);
             count = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser1.Id && u.LevelId == (int)LevelEnum.贵宾会员);
-            if (count >= 2 && recUser1.LevelId <= (int)LevelEnum.贵宾会员)
+            if (count >= 10 && recUser1.LevelId <= (int)LevelEnum.贵宾会员)
             {
                 recUser.LevelId = (int)LevelEnum.超级会员;
                 await dbc.SaveChangesAsync();
@@ -223,7 +223,8 @@ namespace IMS.Service.Service
             dbc.Journals.Add(journal1);
 
             recommendId = recUser.RecommendId;
-            long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
+            //long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
+            long recCount = 0;
 
             decimal param1 = (await dbc.GetDecimalParamAsync("招募创客6到9个奖金比例")) / 100;
             decimal param2 = (await dbc.GetDecimalParamAsync("招募创客大于9个奖金比例")) / 100;
@@ -234,13 +235,13 @@ namespace IMS.Service.Service
                 recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
                 recommendId = recUser.RecommendId;
 
-                if (recCount < 3)
+                if (recCount < 6)
                 {
                     continue;
                 }
-                else if (recCount >= 3 & recCount < 4)
+                else if (recCount >= 6 & recCount < 9)
                 {
-                    blance = blance * param1 / 100;
+                    blance = blance * param1;
                     recUser.Amount = recUser.Amount + blance;
 
                     BonusEntity entity2 = new BonusEntity();
@@ -267,7 +268,7 @@ namespace IMS.Service.Service
                 }
                 else
                 {
-                    blance = blance * param2 / 100;
+                    blance = blance * param2;
                     recUser.Amount = recUser.Amount + blance;
 
                     BonusEntity entity3 = new BonusEntity();
