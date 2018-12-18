@@ -89,7 +89,6 @@ namespace IMS.Service.Service
                 entity.Amount = amount;
                 entity.ImgUrl = "";
                 dbc.CourseOrders.Add(entity);
-                await dbc.SaveChangesAsync();
 
                 JournalEntity journal = new JournalEntity();
                 journal.UserId = user.Id;
@@ -164,7 +163,7 @@ namespace IMS.Service.Service
             count = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser1.Id && u.LevelId == (int)LevelEnum.贵宾会员);
             if (count >= 10 && recUser1.LevelId <= (int)LevelEnum.贵宾会员)
             {
-                recUser.LevelId = (int)LevelEnum.超级会员;
+                recUser1.LevelId = (int)LevelEnum.超级会员;
                 await dbc.SaveChangesAsync();
             }
         }
@@ -221,10 +220,15 @@ namespace IMS.Service.Service
             journal1.GoodsId = course.CourseId;//来至订单ID
             journal1.CurrencyType = (int)CurrencyEnums.碳积分;
             dbc.Journals.Add(journal1);
+            await dbc.SaveChangesAsync();
 
             recommendId = recUser.RecommendId;
-            //long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
-            long recCount = 0;
+            long recCount = await dbc.GetAll<UserEntity>().AsNoTracking().LongCountAsync(u => u.RecommendId == recUser.Id && u.LevelId >= (int)LevelEnum.创客会员);
+            //long recCount = 0;
+            if (recCount < 6)
+            {
+                return;
+            }
 
             decimal param1 = (await dbc.GetDecimalParamAsync("招募创客6到9个奖金比例")) / 100;
             decimal param2 = (await dbc.GetDecimalParamAsync("招募创客大于9个奖金比例")) / 100;
@@ -237,9 +241,9 @@ namespace IMS.Service.Service
 
                 if (recCount < 6)
                 {
-                    continue;
+                    break;
                 }
-                else if (recCount >= 6 & recCount < 9)
+                else if (recCount >= 6 && recCount<10)
                 {
                     blance = blance * param1;
                     recUser.Amount = recUser.Amount + blance;
@@ -265,6 +269,7 @@ namespace IMS.Service.Service
                     journal2.GoodsId = course.CourseId;//来至订单ID
                     journal2.CurrencyType = (int)CurrencyEnums.碳积分;
                     dbc.Journals.Add(journal1);
+                    await dbc.SaveChangesAsync();
                 }
                 else
                 {
@@ -292,10 +297,9 @@ namespace IMS.Service.Service
                     journal3.GoodsId = course.CourseId;//来至订单ID
                     journal3.CurrencyType = (int)CurrencyEnums.碳积分;
                     dbc.Journals.Add(journal3);
+                    await dbc.SaveChangesAsync();
                 }
             }
-
-            await dbc.SaveChangesAsync();
         }
         #endregion
 

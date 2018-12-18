@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
+using IMS.Web.App_Start.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         #region 直推图页面
         [HttpGet]
+        [AdminLog("会员管理", "查看直推图")]
+        [Permission("会员管理_查看直推图")]
         public ActionResult Info(long id)
         {
             return View(id);

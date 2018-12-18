@@ -292,7 +292,7 @@
             del: function (id) {
                 var that = this;
                 layer.confirm("确认删除课程吗？", { icon: 0, title: '是否删除课程' }, function (index) {
-                    that.$http.post('/admin/link/del', { id: id }, { emulateJSON: true }).then(function (result) {
+                    that.$http.post('/admin/course/del', { id: id }, { emulateJSON: true }).then(function (result) {
                         if (result.data.status == 1) {
                             layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                             that.getpage();
@@ -338,22 +338,7 @@
             }
         },
         mounted: function () {
-            this.$http.post('/admin/course/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                if (result.data.status == 1) {
-                    this.links = result.data.data.links;
-                    this.pages.all = result.data.data.pageCount;
-                }
-                else if (result.data.status == 0) {
-                    layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                    //that.msg = result.data.msg;
-                }
-                else if (result.data.status == 302) {
-                    window.location.href = result.data.data;
-                }
-                else if (result.data.status == 401) {
-                    layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                }
-            })
+            this.getpage();
         }
     });
     //laydate({

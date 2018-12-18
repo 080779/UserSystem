@@ -149,6 +149,7 @@
             getpage: function () {
                 this.$http.post('/admin/activate/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.users = result.data.data.users;
+                    this.pages.all = result.data.data.pageCount;
                 })
             },
             pageclick: function (index) {//页码点击事件

@@ -128,6 +128,19 @@
             })
         }
 
+        $('#password').on('keyup change', function () {
+            var that = $(this);
+            var val = that.val();
+            var temp = ""
+            for (var i = 0; i < val.length; i++) {
+                var char = val.charCodeAt(i);
+                if (char > 0 && char < 255 && char !== 32) {
+                    temp += val.charAt(i)
+                }
+            }
+            that.val(temp);
+        });
+
         //验证码
         $("#imgCode").click(function () {
             $("#imgCode").attr("src", "/user/code?" + Math.random());
